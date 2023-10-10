@@ -13,6 +13,10 @@ class MainScreenBloc extends Cubit<MainScreenState> {
   }
 
   void proceedContinue() {
-
+    if (state is PaymentSessionState) {
+      emit(ApplicationState());
+    } else if (state is ApplicationState) {
+      emit(FinalState(Result.success));
+    }
   }
 }

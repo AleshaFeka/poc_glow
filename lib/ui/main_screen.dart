@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poc_glow/data/main_screen_state.dart';
 import 'package:poc_glow/data/main_screen_bloc.dart';
-import 'package:poc_glow/ui/home_screen/create_payment_session_screen.dart';
+import 'package:poc_glow/ui/create_payment_session_screen/create_payment_session_screen.dart';
+import 'package:poc_glow/ui/final_screen/final_screen.dart';
+import 'package:poc_glow/ui/payment_session_screen/payment_session_screen.dart';
 
+import 'application_screen/application_screen.dart';
 import 'shared_widgets/glow_button.dart';
 
 class MainScreen extends StatefulWidget {
@@ -50,11 +53,11 @@ class _MainScreenState extends State<MainScreen> {
           },
         );
       case PaymentSessionState:
-        return Container(color: Colors.green, height: 100, width: 100);
+        return PaymentSessionScreen();
       case ApplicationState:
-        return Container(color: Colors.yellow, height: 100, width: 100);
+        return ApplicationScreen();
       case FinalState:
-        return Container(color: Colors.grey, height: 100, width: 100);
+        return FinalScreen();
     }
     return Container();
   }
