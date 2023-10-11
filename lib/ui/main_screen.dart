@@ -18,7 +18,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final createPaymentSessionBloc = CreatePaymentSessionBloc();
+  final _createPaymentSessionBloc = CreatePaymentSessionBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
     switch (state.runtimeType) {
       case CreatePaymentSessionState:
         return BlocProvider.value(
-          value: createPaymentSessionBloc,
+          value: _createPaymentSessionBloc,
           child: CreatePaymentSessionScreen(
             onPressed: () {
               context.read<MainScreenBloc>().goToCreatePaymentSession();
@@ -108,7 +108,12 @@ class _MainScreenState extends State<MainScreen> {
     return state is! WebViewInteractionState
         ? null
         : AppBar(
-            title: const Text("widget.title"),
+            title: Row(
+              children: const [
+                BackButton(),
+                Text("Back"),
+              ],
+            ),
           );
   }
 }
