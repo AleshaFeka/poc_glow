@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:poc_glow/data/main_screen_state.dart';
-import 'package:poc_glow/data/main_screen_bloc.dart';
+import 'package:poc_glow/ui/main_screen_bloc.dart';
 import 'package:poc_glow/ui/create_payment_session_screen/create_payment_session_screen.dart';
 import 'package:poc_glow/ui/final_screen/final_screen.dart';
 import 'package:poc_glow/ui/payment_session_screen/payment_session_screen.dart';
 
 import 'application_screen/application_screen.dart';
+import 'main_screen_state.dart';
 import 'shared_widgets/glow_button.dart';
 
 class MainScreen extends StatefulWidget {
@@ -19,13 +19,19 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MainScreenBloc, MainScreenState>(
-      builder: (context, state) {
-        return Scaffold(
-          appBar: _buildAppBar(state),
-          body: _buildScreen(state),
-        );
+    return WillPopScope(
+      onWillPop: () async {
+        context.read<MainScreenBloc>().proceedReset();
+        return false;
       },
+      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: _buildAppBar(state),
+            body: _buildScreen(state),
+          );
+        },
+      ),
     );
   }
 
@@ -68,21 +74,25 @@ class _MainScreenState extends State<MainScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        GlowButton(
-          const EdgeInsets.only(left: 16, right: 16),
-          child: const Text("Reset"),
-          onPressed: () {
-            context.read<MainScreenBloc>().proceedReset();
-          },
-        ),
-        if (state is WebViewInteractionState)
-          GlowButton(
-            const EdgeInsets.only(right: 16),
-            child: const Text("Continue"),
-            isAccent: true,
+        Expanded(
+          child: GlowButton(
+            const EdgeInsets.only(left: 16, right: 16),
+            child: const Text("Reset"),
             onPressed: () {
-              context.read<MainScreenBloc>().proceedContinue();
+              context.read<MainScreenBloc>().proceedReset();
             },
+          ),
+        ),
+        if (state is PaymentSessionState)
+          Expanded(
+            child: GlowButton(
+              const EdgeInsets.only(right: 16),
+              child: const Text("Continue"),
+              isAccent: true,
+              onPressed: () {
+                context.read<MainScreenBloc>().proceedContinue();
+              },
+            ),
           )
       ],
     );

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:poc_glow/data/main_screen_state.dart';
+
+import 'main_screen_state.dart';
 
 class MainScreenBloc extends Cubit<MainScreenState> {
   MainScreenBloc() : super(CreatePaymentSessionState());
@@ -13,10 +14,6 @@ class MainScreenBloc extends Cubit<MainScreenState> {
   }
 
   void proceedContinue() {
-    if (state is PaymentSessionState) {
-      emit(ApplicationState());
-    } else if (state is ApplicationState) {
-      emit(FinalState(Result.success));
-    }
+    emit(ApplicationState());
   }
 }
