@@ -12,27 +12,22 @@ class CreatePaymentSessionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) {
-        return CreatePaymentSessionBloc();
-      },
-      child: BlocBuilder<CreatePaymentSessionBloc, CreatePaymentSessionState>(builder: (context, state) {
-        return Expanded(
-          child: Center(
-            child: SizedBox(
-              width: 188,
-              child: GlowButton(
-                EdgeInsets.zero,
-                child: state is LoadedCreatePaymentSessionState
-                    ? const Text("Create Payment")
-                    : const CircularProgressIndicator(color: Colors.grey,),
-                isAccent: true,
-                onPressed: state is LoadedCreatePaymentSessionState ? onPressed : null,
-              ),
+    return BlocBuilder<CreatePaymentSessionBloc, CreatePaymentSessionState>(builder: (context, state) {
+      return Expanded(
+        child: Center(
+          child: SizedBox(
+            width: 188,
+            child: GlowButton(
+              EdgeInsets.zero,
+              child: state is LoadedCreatePaymentSessionState
+                  ? const Text("Create Payment")
+                  : const CircularProgressIndicator(color: Colors.grey,),
+              isAccent: true,
+              onPressed: state is LoadedCreatePaymentSessionState ? onPressed : null,
             ),
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 }

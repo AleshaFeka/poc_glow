@@ -38,10 +38,10 @@ class GlowButton extends StatelessWidget {
             elevation: 0,
             primary: isAccent ? primaryColor : backgroundColor,
             onPrimary: isAccent ? backgroundColor : primaryColor,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4)),
+            shape: RoundedRectangleBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(4)),
               side: BorderSide(
-                color: primaryColor,
+                color: onPressed == null ? Colors.grey : primaryColor,
                 width: 2,
               ),
             ),

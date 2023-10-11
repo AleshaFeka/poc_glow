@@ -6,6 +6,7 @@ import 'package:poc_glow/ui/final_screen/final_screen.dart';
 import 'package:poc_glow/ui/payment_session_screen/payment_session_screen.dart';
 
 import 'application_screen/application_screen.dart';
+import 'create_payment_session_screen/create_payment_session_bloc.dart';
 import 'main_screen_state.dart';
 import 'shared_widgets/glow_button.dart';
 
@@ -17,6 +18,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final createPaymentSessionBloc = CreatePaymentSessionBloc();
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -53,10 +56,13 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildContent(MainScreenState state) {
     switch (state.runtimeType) {
       case CreatePaymentSessionState:
-        return CreatePaymentSessionScreen(
-          onPressed: () {
-            context.read<MainScreenBloc>().goToCreatePaymentSession();
-          },
+        return BlocProvider.value(
+          value: createPaymentSessionBloc,
+          child: CreatePaymentSessionScreen(
+            onPressed: () {
+              context.read<MainScreenBloc>().goToCreatePaymentSession();
+            },
+          ),
         );
       case PaymentSessionState:
         return PaymentSessionScreen();
