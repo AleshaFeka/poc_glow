@@ -72,16 +72,13 @@ class _MainScreenState extends State<MainScreen> {
         return BlocProvider.value(
           value: _paymentSessionBloc,
           child: PaymentSessionScreen(
-            onLoanOptionsSelected: (options) {
-              context.read<MainScreenBloc>().onLoanOptionsSelected();
-            },
-            onLoanOptionsConfirmed: (options) {
-              context.read<MainScreenBloc>().onLoanOptionsConfirmed(options);
+            onLoanOptionsSelected: (loanOptions) {
+              context.read<MainScreenBloc>().onLoanOptionsSelected(loanOptions);
             },
           ),
         );
       case ApplicationState:
-        return ApplicationScreen();
+        return ApplicationScreen((state as ApplicationState).options);
       case FinalState:
         return FinalScreen();
     }

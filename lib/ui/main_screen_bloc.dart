@@ -4,10 +4,15 @@ import 'package:poc_glow/data/model/loan_options.dart';
 import 'main_screen_state.dart';
 
 class MainScreenBloc extends Cubit<MainScreenState> {
+  LoanOptions? _options;
+
   MainScreenBloc() : super(CreatePaymentSessionState());
 
   void goToCreatePaymentSession(String token) {
-    emit(PaymentSessionState(token));
+    emit(PaymentSessionState(
+      token,
+      isAbleToContinue: false,
+    ));
   }
 
   void proceedReset() {
@@ -15,15 +20,13 @@ class MainScreenBloc extends Cubit<MainScreenState> {
   }
 
   void proceedContinue() {
-    emit(ApplicationState());
+    if (_options != null) {
+      emit(ApplicationState(_options!));
+    }
   }
 
-  void onLoanOptionsConfirmed(LoanOptions options) {
-    print("options.payload.upfrontPayment - ${options.payload.upfrontPayment}");
-    emit(ApplicationState());
-  }
-
-  void onLoanOptionsSelected() {
+  void onLoanOptionsSelected(LoanOptions options) {
+    _options = options;
     if (state is PaymentSessionState) {
       emit(
         PaymentSessionState(

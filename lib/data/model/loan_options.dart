@@ -8,7 +8,6 @@ class LoanOptions {
   });
 
   factory LoanOptions.fromJson(Map<String, dynamic> json) {
-    print("json['payload']['loanOption'] - ${json['payload']['loanOption']}");
     return LoanOptions(
       type: LoanOptionType.selectLoanOption,
       payload: LoanPayload.fromJson(json['payload']['loanOption']),

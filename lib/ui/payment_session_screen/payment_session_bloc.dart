@@ -30,12 +30,6 @@ class PaymentSessionBloc extends Cubit<PaymentSessionState> {
     }
   }
 
-  void onLoanOptionsConfirmed() {
-    if (_options != null) {
-      emit(PaymentSessionLoanOptionsConfirmedState(_options!));
-    }
-  }
-
   Future<String> _fetchUrl() async {
     var url = Uri.https(
       'platform-api.dev03.glowfinsvs.com',

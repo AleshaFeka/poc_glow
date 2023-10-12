@@ -19,9 +19,3 @@ class PaymentSessionLoanOptionsSelectedState extends PaymentSessionUrlReadyState
 
   PaymentSessionLoanOptionsSelectedState(String loanUrl, this.options) : super(loanUrl);
 }
-
-class PaymentSessionLoanOptionsConfirmedState extends PaymentSessionState {
-  final LoanOptions options;
-
-  PaymentSessionLoanOptionsConfirmedState(this.options);
-}

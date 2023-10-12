@@ -1,20 +1,16 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:poc_glow/data/model/loan_options.dart';
 import 'package:poc_glow/ui/payment_session_screen/payment_session_state.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'payment_session_bloc.dart';
 
 class PaymentSessionScreen extends StatefulWidget {
-  final void Function(LoanOptions) onLoanOptionsConfirmed;
   final void Function(LoanOptions) onLoanOptionsSelected;
 
   const PaymentSessionScreen({
     Key? key,
-    required this.onLoanOptionsConfirmed,
     required this.onLoanOptionsSelected,
   }) : super(key: key);
 
@@ -35,9 +31,6 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<PaymentSessionBloc, PaymentSessionState>(
       listener: (_, state) {
-        if (state is PaymentSessionLoanOptionsConfirmedState) {
-          widget.onLoanOptionsConfirmed(state.options);
-        }
         if (state is PaymentSessionLoanOptionsSelectedState) {
           widget.onLoanOptionsSelected(state.options);
         }

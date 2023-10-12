@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:poc_glow/data/model/loan_options.dart';
 
 class ApplicationScreen extends StatelessWidget {
-  const ApplicationScreen({Key? key}) : super(key: key);
+  final LoanOptions options;
+  const ApplicationScreen(this.options, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -9,6 +11,7 @@ class ApplicationScreen extends StatelessWidget {
       child: Center(
         child: Container(
           color: Colors.yellow,
+          child: Text(options.payload.interestRate.toString()),
         ),
       ),
     );
