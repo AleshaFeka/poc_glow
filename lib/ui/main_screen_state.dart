@@ -4,7 +4,11 @@ class WebViewInteractionState extends MainScreenState {}
 
 class CreatePaymentSessionState extends MainScreenState {}
 
-class PaymentSessionState extends WebViewInteractionState {}
+class PaymentSessionState extends WebViewInteractionState {
+  final String token;
+  final bool isAbleToContinue;
+  PaymentSessionState(this.token, {this.isAbleToContinue = false});
+}
 
 class ApplicationState extends WebViewInteractionState {}
 

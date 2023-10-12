@@ -12,13 +12,10 @@ class CreatePaymentSessionBloc extends Cubit<CreatePaymentSessionState> {
 
   void init() async {
     emit(LoadingCreatePaymentSessionState());
-    print("token ===== $_token");
-
     _token ??= await _fetchToken();
 
     if (_token != null) {
-      print("Loaded");
-      emit(LoadedCreatePaymentSessionState());
+      emit(LoadedCreatePaymentSessionState(_token as String));
     }
   }
 
@@ -38,7 +35,6 @@ class CreatePaymentSessionBloc extends Cubit<CreatePaymentSessionState> {
     );
 
     final token = jsonDecode(response.body)['token'] as String;
-
     return token;
   }
 }

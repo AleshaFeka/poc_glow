@@ -6,7 +6,7 @@ import 'package:poc_glow/ui/shared_widgets/glow_button.dart';
 import 'create_payment_session_state.dart';
 
 class CreatePaymentSessionScreen extends StatelessWidget {
-  final void Function() onPressed;
+  final void Function(String) onPressed;
 
   const CreatePaymentSessionScreen({required this.onPressed, Key? key}) : super(key: key);
 
@@ -21,9 +21,15 @@ class CreatePaymentSessionScreen extends StatelessWidget {
               EdgeInsets.zero,
               child: state is LoadedCreatePaymentSessionState
                   ? const Text("Create Payment")
-                  : const CircularProgressIndicator(color: Colors.grey,),
+                  : const CircularProgressIndicator(
+                      color: Colors.grey,
+                    ),
               isAccent: true,
-              onPressed: state is LoadedCreatePaymentSessionState ? onPressed : null,
+              onPressed: state is LoadedCreatePaymentSessionState
+                  ? () {
+                      onPressed(state.token);
+                    }
+                  : null,
             ),
           ),
         ),

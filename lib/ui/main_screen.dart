@@ -8,6 +8,7 @@ import 'package:poc_glow/ui/payment_session_screen/payment_session_screen.dart';
 import 'application_screen/application_screen.dart';
 import 'create_payment_session_screen/create_payment_session_bloc.dart';
 import 'main_screen_state.dart';
+import 'payment_session_screen/payment_session_bloc.dart';
 import 'shared_widgets/glow_button.dart';
 
 class MainScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final _createPaymentSessionBloc = CreatePaymentSessionBloc();
+  final _paymentSessionBloc = PaymentSessionBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +61,25 @@ class _MainScreenState extends State<MainScreen> {
         return BlocProvider.value(
           value: _createPaymentSessionBloc,
           child: CreatePaymentSessionScreen(
-            onPressed: () {
-              context.read<MainScreenBloc>().goToCreatePaymentSession();
+            onPressed: (token) {
+              context.read<MainScreenBloc>().goToCreatePaymentSession(token);
             },
           ),
         );
       case PaymentSessionState:
-        return PaymentSessionScreen();
+        _paymentSessionBloc.token = (state as PaymentSessionState).token;
+
+        return BlocProvider.value(
+          value: _paymentSessionBloc,
+          child: PaymentSessionScreen(
+            onLoanOptionsSelected: (options) {
+              context.read<MainScreenBloc>().onLoanOptionsSelected();
+            },
+            onLoanOptionsConfirmed: (options) {
+              context.read<MainScreenBloc>().onLoanOptionsConfirmed(options);
+            },
+          ),
+        );
       case ApplicationState:
         return ApplicationScreen();
       case FinalState:
@@ -77,30 +91,35 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildBottomButtons(MainScreenState state) {
     if (state is CreatePaymentSessionState) return Container();
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Expanded(
-          child: GlowButton(
-            const EdgeInsets.only(left: 16, right: 16),
-            child: const Text("Reset"),
-            onPressed: () {
-              context.read<MainScreenBloc>().proceedReset();
-            },
-          ),
-        ),
-        if (state is PaymentSessionState)
+    return Padding(
+      padding: const EdgeInsets.only(top: 18.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
           Expanded(
             child: GlowButton(
-              const EdgeInsets.only(right: 16),
-              child: const Text("Continue"),
-              isAccent: true,
+              const EdgeInsets.only(left: 16, right: 16),
+              child: const Text("Reset"),
               onPressed: () {
-                context.read<MainScreenBloc>().proceedContinue();
+                context.read<MainScreenBloc>().proceedReset();
               },
             ),
-          )
-      ],
+          ),
+          if (state is PaymentSessionState)
+            Expanded(
+              child: GlowButton(
+                const EdgeInsets.only(right: 16),
+                child: const Text("Continue"),
+                isAccent: true,
+                onPressed: state.isAbleToContinue
+                    ? () {
+                        context.read<MainScreenBloc>().proceedContinue();
+                      }
+                    : null,
+              ),
+            )
+        ],
+      ),
     );
   }
 
