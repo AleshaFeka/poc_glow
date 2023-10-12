@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:poc_glow/data/model/loan_options.dart';
+import 'package:poc_glow/main.dart';
 
 import '../../data/model/payment_session_data_model.dart';
 import 'payment_session_state.dart';
@@ -34,7 +35,7 @@ class PaymentSessionBloc extends Cubit<PaymentSessionState> {
 
   Future<PaymentSessionDataModel> _fetchData() async {
     var url = Uri.https(
-      'platform-api.dev03.glowfinsvs.com',
+      baseUrl,
       'api/ee/paymentSession',
     );
     var response = await http.post(

@@ -7,22 +7,37 @@ import '../../data/model/loan_options.dart';
 import '../../data/model/payment_session_data_model.dart';
 import 'package:http/http.dart' as http;
 
+import '../../main.dart';
+
 class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
   LoanOptions? options;
   PaymentSessionDataModel? paymentData;
 
   ApplicationScreenBloc() : super(ApplicationScreenInitialState());
 
-
-
   void init() async {
     emit(ApplicationScreenUrlLoadingState());
-    print(options?.payload.term);
-    print("payment data - ${paymentData?.basketId} / ${paymentData?.sessionId}");
 
+    var url = Uri.https(
+      baseUrl,
+      'api/ee/application/initialize',
+    );
+    var response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer ${paymentData?.token}",
+        "content-type": "application/json",
+        "Accept": "application/json",
+      },
+      body: jsonEncode(_buildMockBody()),
+    );
 
+    print("response.statusCode = ${response.statusCode}");
+    print("response.body = ${response.body}");
+  }
 
-    final sss = {
+  Map<String, Object> _buildMockBody() {
+    return {
       "session_id": paymentData?.sessionId ?? "",
       "locale": "en-GB",
       "theme": "dark",
@@ -38,7 +53,7 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
         "customer_id": "a98853f9-9763-4929-9aca-1da3eec3be84",
         "customer_authentication": "password only",
         "customer_tenure": 60,
-        "type_of_customer":"EE",
+        "type_of_customer": "EE",
         "inGoodstanding": false,
         "first_name": "John",
         "middle_name": "",
@@ -84,7 +99,8 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
               "model": "Fold 5G",
               "product_category": "Mobile",
               "product_sku": "1-1900",
-              "description": "512Gb, space silver. A device unlike any before. Galaxy Fold 5G doesn't just change the face of the smartphone, it changes the face of tomorrow. Today, we introduce the biggest breakthrough since the mobile phone. ",
+              "description":
+                  "512Gb, space silver. A device unlike any before. Galaxy Fold 5G doesn't just change the face of the smartphone, it changes the face of tomorrow. Today, we introduce the biggest breakthrough since the mobile phone. ",
               "name": "Galaxy Fold 5G"
             },
             "expected_delivery_date": "2021-03-22",
@@ -97,27 +113,5 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
         ]
       }
     };
-
-
-    print("jsonEncode(_mockBody) = ${jsonEncode(sss)}");
-
-    var url = Uri.https(
-      'platform-api.dev03.glowfinsvs.com',
-      'api/ee/application/initialize',
-    );
-    var response = await http.post(
-      url,
-      headers: {
-        "Authorization": "Bearer ${paymentData?.token}",
-        "content-type": "application/json",
-        "Accept": "application/json",
-      },
-      body: jsonEncode(sss),
-    );
-
-    print("response.statusCode = ${response.statusCode}");
-    print("response.body = ${response.body}");
-
   }
 }
-

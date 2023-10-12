@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import '../../main.dart';
 import 'create_payment_session_state.dart';
 
 class CreatePaymentSessionBloc extends Cubit<CreatePaymentSessionState> {
@@ -21,7 +22,7 @@ class CreatePaymentSessionBloc extends Cubit<CreatePaymentSessionState> {
 
   Future<String> _fetchToken() async {
     var url = Uri.https(
-      'platform-api.dev03.glowfinsvs.com',
+      baseUrl,
       'api/auth/token',
     );
     var response = await http.post(

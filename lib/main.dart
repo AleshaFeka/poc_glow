@@ -8,6 +8,7 @@ void main() {
 
 const primaryColor = Color(0xFF0066FF);
 const backgroundColor = Color(0xFFFFFFFF);
+const baseUrl = "platform-api.dev03.glowfinsvs.com";
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
