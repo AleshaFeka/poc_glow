@@ -60,7 +60,7 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         },
 */
         initialUrlRequest: URLRequest(
-          url: Uri.parse("https://flutter.dev"),
+          url: Uri.parse(state.appUrl),
         ),
       );
     }
