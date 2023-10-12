@@ -4,33 +4,35 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:poc_glow/data/model/loan_options.dart';
 
+import '../../data/model/payment_session_data_model.dart';
 import 'payment_session_state.dart';
 
 class PaymentSessionBloc extends Cubit<PaymentSessionState> {
-  LoanOptions? _options;
+  LoanOptions? options;
+  PaymentSessionDataModel? model;
   String token = "";
-  String _loanUrl = "";
 
   PaymentSessionBloc() : super(PaymentSessionUrlLoadingState());
 
   void init() async {
-    _loanUrl = await _fetchUrl();
-    print("loanUrl = $_loanUrl");
-    emit(PaymentSessionUrlLoadedState(_loanUrl));
+    model = await _fetchData();
+    if (model?.loanUrl != null) {
+      emit(PaymentSessionUrlLoadedState(model!.loanUrl));
+    }
   }
 
   void onLoanOptionsSelected(List<dynamic> args) {
     if (args.first != null) {
       final jsonRaw = args.first as Map<String, dynamic>;
-      _options = LoanOptions.fromJson(jsonRaw);
+      options = LoanOptions.fromJson(jsonRaw);
 
-      if (_options != null) {
-        emit(PaymentSessionLoanOptionsSelectedState(_loanUrl, _options!));
+      if (options != null && model?.loanUrl != null) {
+        emit(PaymentSessionLoanOptionsSelectedState(model?.loanUrl ?? "", options!));
       }
     }
   }
 
-  Future<String> _fetchUrl() async {
+  Future<PaymentSessionDataModel> _fetchData() async {
     var url = Uri.https(
       'platform-api.dev03.glowfinsvs.com',
       'api/ee/paymentSession',
@@ -46,8 +48,17 @@ class PaymentSessionBloc extends Cubit<PaymentSessionState> {
     );
 
     final loanUrl = jsonDecode(response.body)['loan_application_url'] as String;
+    final sessionId = jsonDecode(response.body)['session_id'] as String;
+    final basketId = jsonDecode(response.body)['basket_id'] as String;
 
-    return loanUrl;
+    final model = PaymentSessionDataModel(
+      token: token,
+      loanUrl: loanUrl,
+      sessionId: sessionId,
+      basketId: basketId,
+    );
+
+    return model;
   }
 }
 

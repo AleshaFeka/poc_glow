@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:poc_glow/ui/application_screen/application_screen_bloc.dart';
 import 'package:poc_glow/ui/main_screen_bloc.dart';
 import 'package:poc_glow/ui/create_payment_session_screen/create_payment_session_screen.dart';
 import 'package:poc_glow/ui/final_screen/final_screen.dart';
@@ -21,6 +22,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   final _createPaymentSessionBloc = CreatePaymentSessionBloc();
   final _paymentSessionBloc = PaymentSessionBloc();
+  final _applicationScreenBloc = ApplicationScreenBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +70,6 @@ class _MainScreenState extends State<MainScreen> {
         );
       case PaymentSessionState:
         _paymentSessionBloc.token = (state as PaymentSessionState).token;
-
         return BlocProvider.value(
           value: _paymentSessionBloc,
           child: PaymentSessionScreen(
@@ -78,7 +79,12 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
       case ApplicationState:
-        return ApplicationScreen((state as ApplicationState).options);
+        _applicationScreenBloc.options = (state as ApplicationState).options;
+        _applicationScreenBloc.paymentData = _paymentSessionBloc.model;
+        return BlocProvider.value(
+          value: _applicationScreenBloc,
+          child: ApplicationScreen(),
+        );
       case FinalState:
         return FinalScreen();
     }
