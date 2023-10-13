@@ -16,6 +16,8 @@ class ApplicationScreen extends StatefulWidget {
 }
 
 class _ApplicationScreenState extends State<ApplicationScreen> {
+  InAppWebViewController? _webViewController;
+
   @override
   void initState() {
     super.initState();
@@ -51,16 +53,30 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     }
     if (state is ApplicationScreenUrlLoadedState) {
       return InAppWebView(
-/*
         onWebViewCreated: (controller) async {
           _webViewController = controller;
           _webViewController?.addJavaScriptHandler(
-              handlerName: "SELECT_LOAN_OPTION",
-              callback: (args) {
-                context.read<PaymentSessionBloc>().onLoanOptionsSelected(args);
-              });
+            handlerName: "APPLICATION_COMPLETED",
+            callback: (args) {
+              print("APPLICATION_COMPLETED");
+              widget.onDone(Result.success);
+            },
+          );
+          _webViewController?.addJavaScriptHandler(
+            handlerName: "APPLICATION_PAUSED",
+            callback: (args) {
+              print("APPLICATION_PAUSED");
+              widget.onDone(Result.pending);
+            },
+          );
+          _webViewController?.addJavaScriptHandler(
+            handlerName: "FINAL_PAGE_CLOSING",
+            callback: (args) {
+              print("FINAL_PAGE_CLOSING");
+              widget.onDone(Result.fail);
+            },
+          );
         },
-*/
         initialUrlRequest: URLRequest(
           url: Uri.parse(state.appUrl),
         ),

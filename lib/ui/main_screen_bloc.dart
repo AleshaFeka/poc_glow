@@ -6,7 +6,7 @@ import 'main_screen_state.dart';
 class MainScreenBloc extends Cubit<MainScreenState> {
   LoanOptions? _options;
 
-  MainScreenBloc() : super(FinalState(Result.fail));
+  MainScreenBloc() : super(CreatePaymentSessionState());
 
   void goToCreatePaymentSession(String token) {
     emit(PaymentSessionState(
