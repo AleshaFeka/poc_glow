@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poc_glow/ui/create_payment_session_screen/create_payment_session_bloc.dart';
 import 'package:poc_glow/ui/shared_widgets/glow_button.dart';
 
+import '../../main.dart';
 import 'create_payment_session_state.dart';
 
 class CreatePaymentSessionScreen extends StatelessWidget {
@@ -12,6 +14,13 @@ class CreatePaymentSessionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: backgroundColor,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+
     return BlocBuilder<CreatePaymentSessionBloc, CreatePaymentSessionState>(builder: (context, state) {
       return Expanded(
         child: Center(

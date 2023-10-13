@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:poc_glow/ui/main_screen_state.dart';
 
 class FinalScreen extends StatelessWidget {
@@ -8,6 +9,13 @@ class FinalScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.dark,
+        statusBarColor: result.getBackgroundColor(),
+      ),
+    );
+
     return Expanded(
       child: Container(
         color: result.getBackgroundColor(),

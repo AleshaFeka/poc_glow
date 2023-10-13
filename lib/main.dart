@@ -13,15 +13,11 @@ const baseUrl = "platform-api.dev03.glowfinsvs.com";
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: backgroundColor,
-    ));
-
     return MaterialApp(
       title: 'PoC Glow',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
           elevation: 0,

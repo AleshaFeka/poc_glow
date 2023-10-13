@@ -77,7 +77,7 @@ final _mockedRequestData = {
     "Ee_Product_COM"
   ],
   "sales_channel": {
-    "type": "com",
+    "type": "online",
     // (required) The channel the sale has been initiated from, "web", "mobile", "telesale", "assisted"
     "company_name": "EE",
     // (required) The integrator company name
