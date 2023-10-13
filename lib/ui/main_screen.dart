@@ -83,10 +83,14 @@ class _MainScreenState extends State<MainScreen> {
         _applicationScreenBloc.paymentData = _paymentSessionBloc.model;
         return BlocProvider.value(
           value: _applicationScreenBloc,
-          child: ApplicationScreen(),
+          child: ApplicationScreen(
+            onDone: (result) {
+              context.read<MainScreenBloc>().onApplicationScreenDone(result);
+            },
+          ),
         );
       case FinalState:
-        return FinalScreen();
+        return FinalScreen((state as FinalState).result);
     }
     return Container();
   }

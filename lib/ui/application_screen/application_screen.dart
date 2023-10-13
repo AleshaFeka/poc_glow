@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:poc_glow/data/model/loan_options.dart';
+import 'package:poc_glow/ui/main_screen_state.dart';
 
 import 'application_screen_bloc.dart';
 import 'application_screen_state.dart';
 
 class ApplicationScreen extends StatefulWidget {
-  const ApplicationScreen({Key? key}) : super(key: key);
+  final Function(Result) onDone;
+
+  const ApplicationScreen({Key? key, required this.onDone}) : super(key: key);
 
   @override
   State<ApplicationScreen> createState() => _ApplicationScreenState();
