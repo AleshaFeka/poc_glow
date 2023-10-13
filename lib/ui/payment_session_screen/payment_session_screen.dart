@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -69,7 +71,7 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
               });
         },
         initialUrlRequest: URLRequest(
-          url: Uri.parse(/*"https://flutter.dev"*/state.loanUrl),
+          url: Uri.parse(state.loanUrl),
         ),
       );
     }
