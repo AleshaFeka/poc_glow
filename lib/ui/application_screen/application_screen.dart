@@ -72,6 +72,7 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
           _webViewController?.addJavaScriptHandler(
             handlerName: "FINAL_PAGE_CLOSING",
             callback: (args) {
+              //todo handle payload
               print("FINAL_PAGE_CLOSING");
               widget.onDone(Result.fail);
             },
