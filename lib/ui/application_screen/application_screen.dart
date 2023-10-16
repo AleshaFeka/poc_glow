@@ -55,27 +55,6 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     }
     if (state is ApplicationScreenUrlLoadedState) {
       return InAppWebView(
-/*
-        onConsoleMessage: (webViewController, consoleMessage) async {
-          print("onConsoleMessage = " + jsonDecode(consoleMessage.message.toString()));
-
-          final messageModel = jsonDecode(consoleMessage.message);
-          final bloc = context.read<ApplicationScreenBloc>();
-
-          if (messageModel['basket_id'] == bloc.paymentData?.basketId && messageModel['result'] == "FAIL") {
-            widget.onDone(Result.fail);
-          }
-        },
-*/
-        onLoadStop: (_, __) {
-          _webViewController?.evaluateJavascript(source: """addEventListener('message', 
-            function(event) {
-              if (event.data.result == "FAIL") {
-                 window.flutter_inappwebview.callHandler("FINAL_PAGE_CLOSING", "MyFailArgMock")
-              }
-            }
-          ); """);
-        },
         onWebViewCreated: (controller) async {
           _webViewController = controller;
           _webViewController?.addJavaScriptHandler(
@@ -93,10 +72,9 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
             },
           );
           _webViewController?.addJavaScriptHandler(
-            handlerName: "FINAL_PAGE_CLOSING",
+            handlerName: "APPLICATION_CANCELLED",
             callback: (args) {
-              //todo handle payload
-              print("FINAL_PAGE_CLOSING ${args}");
+              print("APPLICATION_CANCELLED $args");
               widget.onDone(Result.fail);
             },
           );
