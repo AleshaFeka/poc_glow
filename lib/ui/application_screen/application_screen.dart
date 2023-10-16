@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -53,8 +51,20 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     if (state is ApplicationScreenUrlLoadingState) {
       return const Center(child: CircularProgressIndicator());
     }
+    if (state is ApplicationScreenNoPermissionsGrantedState) {
+      return const Center(child: Text("No Permissions Granted."));
+    }
     if (state is ApplicationScreenUrlLoadedState) {
       return InAppWebView(
+        androidOnPermissionRequest: (_, __, resources) async {
+          return PermissionRequestResponse(
+            resources: resources,
+            action: PermissionRequestResponseAction.GRANT,
+          );
+        },
+        initialOptions: InAppWebViewGroupOptions(
+          crossPlatform: InAppWebViewOptions(mediaPlaybackRequiresUserGesture: false),
+        ),
         onWebViewCreated: (controller) async {
           _webViewController = controller;
           _webViewController?.addJavaScriptHandler(
@@ -67,14 +77,12 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
           _webViewController?.addJavaScriptHandler(
             handlerName: "APPLICATION_PAUSED",
             callback: (args) {
-              print("APPLICATION_PAUSED");
               widget.onDone(Result.pending);
             },
           );
           _webViewController?.addJavaScriptHandler(
             handlerName: "APPLICATION_CANCELLED",
             callback: (args) {
-              print("APPLICATION_CANCELLED $args");
               widget.onDone(Result.fail);
             },
           );

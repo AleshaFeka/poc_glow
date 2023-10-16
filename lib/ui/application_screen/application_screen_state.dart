@@ -4,6 +4,8 @@ class ApplicationScreenInitialState extends ApplicationScreenState {}
 
 class ApplicationScreenUrlLoadingState extends ApplicationScreenState {}
 
+class ApplicationScreenNoPermissionsGrantedState extends ApplicationScreenState {}
+
 class ApplicationScreenUrlLoadedState extends ApplicationScreenState {
   final String appUrl;
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:poc_glow/ui/application_screen/application_screen_state.dart';
 
 import '../../data/model/loan_options.dart';
@@ -18,26 +19,29 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
   void init() async {
     emit(ApplicationScreenUrlLoadingState());
 
-    var url = Uri.https(
-      baseUrl,
-      'api/ee/application/initialize',
-    );
-    var response = await http.post(
-      url,
-      headers: {
-        "Authorization": "Bearer ${paymentData?.token}",
-        "content-type": "application/json",
-        "Accept": "application/json",
-      },
-      body: jsonEncode(_buildMockBody()),
-    );
+    final cameraPermission = await Permission.camera.request();
+    final microphonePermission = await Permission.microphone.request();
 
-    print("response.statusCode = ${response.statusCode}");
-    print("response.body = ${response.body}");
-    print(jsonDecode(response.body)['application_url']);
+    if (cameraPermission != PermissionStatus.granted || microphonePermission != PermissionStatus.granted) {
+      emit(ApplicationScreenNoPermissionsGrantedState());
+    } else {
+      var url = Uri.https(
+        baseUrl,
+        'api/ee/application/initialize',
+      );
+      var response = await http.post(
+        url,
+        headers: {
+          "Authorization": "Bearer ${paymentData?.token}",
+          "content-type": "application/json",
+          "Accept": "application/json",
+        },
+        body: jsonEncode(_buildMockBody()),
+      );
 
-    if (jsonDecode(response.body)['application_url'] != null){
-      emit(ApplicationScreenUrlLoadedState(appUrl: jsonDecode(response.body)['application_url']));
+      if (jsonDecode(response.body)['application_url'] != null) {
+        emit(ApplicationScreenUrlLoadedState(appUrl: jsonDecode(response.body)['application_url']));
+      }
     }
   }
 
