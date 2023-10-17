@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:poc_glow/ui/main_screen_state.dart';
+import 'package:poc_glow/data/model/result.dart';
 
 class FinalScreen extends StatelessWidget {
   final Result result;
@@ -23,7 +23,7 @@ class FinalScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(result.getIcon()),
+              if (result.getIcon().isNotEmpty) Image.asset(result.getIcon()),
               Text(
                 result.getText(),
                 style: const TextStyle(

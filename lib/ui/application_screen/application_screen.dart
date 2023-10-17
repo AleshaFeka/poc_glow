@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:poc_glow/ui/main_screen_state.dart';
+import 'package:poc_glow/data/model/result.dart';
 
 import 'application_screen_bloc.dart';
 import 'application_screen_state.dart';

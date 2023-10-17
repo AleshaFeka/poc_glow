@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poc_glow/data/model/loan_options.dart';
+import 'package:poc_glow/data/model/result.dart';
 
 import 'main_screen_state.dart';
 
