@@ -11,3 +11,7 @@ class ApplicationScreenUrlLoadedState extends ApplicationScreenState {
 
   ApplicationScreenUrlLoadedState({required this.appUrl});
 }
+
+class ApplicationScreenBackButtonPressedState extends ApplicationScreenUrlLoadedState {
+  ApplicationScreenBackButtonPressedState({required String appUrl}) : super(appUrl: appUrl);
+}

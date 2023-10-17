@@ -28,11 +28,18 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        context.read<ApplicationScreenBloc>().onWillPop();
+        context.read<ApplicationScreenBloc>().onBackButtonPressed();
         return false;
       },
       child: BlocConsumer<ApplicationScreenBloc, ApplicationScreenState>(
-        listener: (BuildContext context, state) {},
+        listener: (BuildContext context, state) async {
+          if (state is ApplicationScreenBackButtonPressedState) {
+            _webViewController?.evaluateJavascript(source: """
+              window.dispatchEvent(new CustomEvent("BACK_BUTTON_CLICKED"));              
+            """);
+            print("_webViewController?.evaluateJavascript done.");
+          }
+        },
         builder: (_, state) {
           return Expanded(
             child: Center(

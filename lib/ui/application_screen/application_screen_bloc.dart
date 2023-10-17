@@ -49,10 +49,15 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
 
   void onLoadStop() {
     _isLoadCompleted = true;
+    print("onLoadStop - _isLoadCompleted - $_isLoadCompleted");
   }
 
-  void onWillPop() {
-    print("onWillPop - back button pressed _isLoadCompleted - $_isLoadCompleted");
+  void onBackButtonPressed() {
+    if (_isLoadCompleted && state is ApplicationScreenUrlLoadedState) {
+      emit(
+        ApplicationScreenBackButtonPressedState(appUrl: (state as ApplicationScreenUrlLoadedState).appUrl),
+      );
+    }
   }
 
   Map<String, Object> _buildMockBody() {
