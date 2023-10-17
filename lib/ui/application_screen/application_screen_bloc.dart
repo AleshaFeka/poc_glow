@@ -13,10 +13,12 @@ import '../../main.dart';
 class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
   LoanOptions? options;
   PaymentSessionDataModel? paymentData;
+  bool _isLoadCompleted = false;
 
   ApplicationScreenBloc() : super(ApplicationScreenInitialState());
 
   void init() async {
+    _isLoadCompleted = false;
     emit(ApplicationScreenUrlLoadingState());
 
     final cameraPermission = await Permission.camera.request();
@@ -43,6 +45,14 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
         emit(ApplicationScreenUrlLoadedState(appUrl: jsonDecode(response.body)['application_url']));
       }
     }
+  }
+
+  void onLoadStop() {
+    _isLoadCompleted = true;
+  }
+
+  void onWillPop() {
+    print("onWillPop - back button pressed _isLoadCompleted - $_isLoadCompleted");
   }
 
   Map<String, Object> _buildMockBody() {

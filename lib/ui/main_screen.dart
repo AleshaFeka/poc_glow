@@ -26,19 +26,13 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        context.read<MainScreenBloc>().proceedReset();
-        return false;
+    return BlocBuilder<MainScreenBloc, MainScreenState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: _buildAppBar(state),
+          body: _buildScreen(state),
+        );
       },
-      child: BlocBuilder<MainScreenBloc, MainScreenState>(
-        builder: (context, state) {
-          return Scaffold(
-            appBar: _buildAppBar(state),
-            body: _buildScreen(state),
-          );
-        },
-      ),
     );
   }
 
@@ -63,6 +57,9 @@ class _MainScreenState extends State<MainScreen> {
         return BlocProvider.value(
           value: _createPaymentSessionBloc,
           child: CreatePaymentSessionScreen(
+            onBackButtonPressed: () {
+              context.read<MainScreenBloc>().proceedReset();
+            },
             onPressed: (token) {
               context.read<MainScreenBloc>().goToCreatePaymentSession(token);
             },
@@ -73,6 +70,9 @@ class _MainScreenState extends State<MainScreen> {
         return BlocProvider.value(
           value: _paymentSessionBloc,
           child: PaymentSessionScreen(
+            onBackButtonPressed: () {
+              context.read<MainScreenBloc>().proceedReset();
+            },
             onLoanOptionsSelected: (loanOptions) {
               context.read<MainScreenBloc>().onLoanOptionsSelected(loanOptions);
             },

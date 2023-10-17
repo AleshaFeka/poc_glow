@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -10,10 +8,12 @@ import 'payment_session_bloc.dart';
 
 class PaymentSessionScreen extends StatefulWidget {
   final void Function(LoanOptions) onLoanOptionsSelected;
+  final void Function() onBackButtonPressed;
 
   const PaymentSessionScreen({
     Key? key,
     required this.onLoanOptionsSelected,
+    required this.onBackButtonPressed,
   }) : super(key: key);
 
   @override
@@ -31,28 +31,34 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PaymentSessionBloc, PaymentSessionState>(
-      listener: (_, state) {
-        if (state is PaymentSessionLoanOptionsSelectedState) {
-          widget.onLoanOptionsSelected(state.options);
-        }
+    return WillPopScope(
+      onWillPop: () async {
+        widget.onBackButtonPressed();
+        return false;
       },
-      builder: (_, state) {
-        return Expanded(
-          child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: const Color(0xFFD9D9D9),
-                  width: 2,
+      child: BlocConsumer<PaymentSessionBloc, PaymentSessionState>(
+        listener: (_, state) {
+          if (state is PaymentSessionLoanOptionsSelectedState) {
+            widget.onLoanOptionsSelected(state.options);
+          }
+        },
+        builder: (_, state) {
+          return Expanded(
+            child: Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: const Color(0xFFD9D9D9),
+                    width: 2,
+                  ),
                 ),
+                padding: const EdgeInsets.all(16),
+                child: _buildContent(state),
               ),
-              padding: const EdgeInsets.all(16),
-              child: _buildContent(state),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

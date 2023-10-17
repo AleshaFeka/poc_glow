@@ -26,24 +26,30 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ApplicationScreenBloc, ApplicationScreenState>(
-      listener: (BuildContext context, state) {},
-      builder: (_, state) {
-        return Expanded(
-          child: Center(
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: const Color(0xFFD9D9D9),
-                  width: 2,
-                ),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: _buildContent(state),
-            ),
-          ),
-        );
+    return WillPopScope(
+      onWillPop: () async {
+        context.read<ApplicationScreenBloc>().onWillPop();
+        return false;
       },
+      child: BlocConsumer<ApplicationScreenBloc, ApplicationScreenState>(
+        listener: (BuildContext context, state) {},
+        builder: (_, state) {
+          return Expanded(
+            child: Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: const Color(0xFFD9D9D9),
+                    width: 2,
+                  ),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: _buildContent(state),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -65,6 +71,9 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(mediaPlaybackRequiresUserGesture: false),
         ),
+        onLoadStop: (_, __) {
+          context.read<ApplicationScreenBloc>().onLoadStop();
+        },
         onWebViewCreated: (controller) async {
           _webViewController = controller;
           _webViewController?.addJavaScriptHandler(
@@ -78,6 +87,18 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
             handlerName: "APPLICATION_PAUSED",
             callback: (args) {
               widget.onDone(Result.pending);
+            },
+          );
+          _webViewController?.addJavaScriptHandler(
+            handlerName: "APPLICATION_CANCEL_ACCEPTED",
+            callback: (args) {
+              widget.onDone(Result.cancelAccepted);
+            },
+          );
+          _webViewController?.addJavaScriptHandler(
+            handlerName: "APPLICATION_PAUSE_ACCEPTED",
+            callback: (args) {
+              widget.onDone(Result.pauseAccepted);
             },
           );
           _webViewController?.addJavaScriptHandler(
