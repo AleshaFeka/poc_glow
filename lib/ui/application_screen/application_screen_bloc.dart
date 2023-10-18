@@ -41,6 +41,8 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
         body: jsonEncode(_buildMockBody()),
       );
 
+      print(jsonDecode(response.body)['application_url']);
+
       if (jsonDecode(response.body)['application_url'] != null) {
         emit(ApplicationScreenUrlLoadedState(appUrl: jsonDecode(response.body)['application_url']));
       }

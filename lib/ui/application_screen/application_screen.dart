@@ -17,6 +17,33 @@ class ApplicationScreen extends StatefulWidget {
 
 class _ApplicationScreenState extends State<ApplicationScreen> {
   InAppWebViewController? _webViewController;
+  final InAppWebViewGroupOptions _inAppWebViewGroupOptions = InAppWebViewGroupOptions(
+    crossPlatform: InAppWebViewOptions(
+        mediaPlaybackRequiresUserGesture: false,
+        preferredContentMode: UserPreferredContentMode.MOBILE,
+        supportZoom: false,
+        javaScriptEnabled: true,
+        transparentBackground: false,
+        useShouldInterceptFetchRequest: false,
+        useShouldInterceptAjaxRequest: false,
+        useShouldOverrideUrlLoading: false,
+        allowFileAccessFromFileURLs: false,
+        allowUniversalAccessFromFileURLs: false),
+    ios: IOSInAppWebViewOptions(
+      contentInsetAdjustmentBehavior:
+      IOSUIScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
+      applePayAPIEnabled: true,
+    ),
+    android: AndroidInAppWebViewOptions(
+      useHybridComposition: false,
+      useShouldInterceptRequest: false,
+      allowContentAccess: false,
+      mixedContentMode: AndroidMixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+      allowFileAccess: false,
+      domStorageEnabled: false,
+      geolocationEnabled: false,
+    ),
+  );
 
   @override
   void initState() {
@@ -35,7 +62,8 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         listener: (BuildContext context, state) async {
           if (state is ApplicationScreenBackButtonPressedState) {
             _webViewController?.evaluateJavascript(source: """
-              window.dispatchEvent(new CustomEvent("BACK_BUTTON_CLICKED"));              
+              console.log(window);
+              window.dispatchEvent(new Event('BACK_BUTTON_CLICKED'));             
             """);
             print("_webViewController?.evaluateJavascript done.");
           }
@@ -69,15 +97,16 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     }
     if (state is ApplicationScreenUrlLoadedState) {
       return InAppWebView(
+        initialOptions: _inAppWebViewGroupOptions,
+        onConsoleMessage: (a, b) {
+          print("onConsoleMessage - $b");
+        },
         androidOnPermissionRequest: (_, __, resources) async {
           return PermissionRequestResponse(
             resources: resources,
             action: PermissionRequestResponseAction.GRANT,
           );
         },
-        initialOptions: InAppWebViewGroupOptions(
-          crossPlatform: InAppWebViewOptions(mediaPlaybackRequiresUserGesture: false),
-        ),
         onLoadStop: (_, __) {
           context.read<ApplicationScreenBloc>().onLoadStop();
         },

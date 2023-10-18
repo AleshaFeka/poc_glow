@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -22,6 +24,7 @@ class PaymentSessionScreen extends StatefulWidget {
 
 class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
   InAppWebViewController? _webViewController;
+  double _webViewContainerHeight = 2500;
 
   @override
   void initState() {
@@ -67,20 +70,55 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
       return const Center(child: CircularProgressIndicator());
     }
     if (state is PaymentSessionUrlReadyState) {
-      return InAppWebView(
-        onWebViewCreated: (controller) async {
-          _webViewController = controller;
-          _webViewController?.addJavaScriptHandler(
-              handlerName: "SELECT_LOAN_OPTION",
-              callback: (args) {
-                context.read<PaymentSessionBloc>().onLoanOptionsSelected(args);
-              });
-        },
-        initialUrlRequest: URLRequest(
-          url: Uri.parse(state.loanUrl),
+      return SingleChildScrollView(
+        child: SizedBox(
+          height: _webViewContainerHeight,
+          child: InAppWebView(
+            onWebViewCreated: (controller) async {
+              _webViewController = controller;
+              _webViewController?.addJavaScriptHandler(
+                  handlerName: "SELECT_LOAN_OPTION",
+                  callback: (args) {
+                    context.read<PaymentSessionBloc>().onLoanOptionsSelected(args);
+                    _webViewController?.evaluateJavascript(source: """
+                      window.flutter_inappwebview.callHandler(
+                        'SET_WEB_VIEW_HEIGHT_HANDLER', 
+                        {"webViewScrollHeight" :document.querySelector('div').scrollHeight}
+                      );
+                    """);
+                  });
+
+              _webViewController?.addJavaScriptHandler(
+                handlerName: "SET_WEB_VIEW_HEIGHT_HANDLER",
+                callback: _onHeightChanged,
+              );
+            },
+            initialUrlRequest: URLRequest(
+              url: Uri.parse(state.loanUrl),
+            ),
+          ),
         ),
       );
     }
     return Container();
+  }
+
+  _onHeightChanged(dynamic args) {
+    final data = args.first;
+
+    if (data['webViewScrollHeight'] != null) {
+      double newHeight = 0.0;
+      try {
+        newHeight = double.parse(data['webViewScrollHeight'].toString());
+      } catch (ignored) {
+        //Just ignore, not change height.
+      }
+
+      if (newHeight > 0.0) {
+        setState(() {
+          _webViewContainerHeight = newHeight;
+        });
+      }
+    }
   }
 }
