@@ -26,7 +26,7 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         transparentBackground: false,
         useShouldInterceptFetchRequest: false,
         useShouldInterceptAjaxRequest: false,
-        useShouldOverrideUrlLoading: false,
+        useShouldOverrideUrlLoading: true,
         allowFileAccessFromFileURLs: false,
         allowUniversalAccessFromFileURLs: false),
     ios: IOSInAppWebViewOptions(
@@ -35,7 +35,7 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     ),
     android: AndroidInAppWebViewOptions(
       useHybridComposition: false,
-      useShouldInterceptRequest: false,
+      useShouldInterceptRequest: true,
       allowContentAccess: false,
       mixedContentMode: AndroidMixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
       allowFileAccess: false,
@@ -94,6 +94,7 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     }
     if (state is ApplicationScreenUrlLoadedState) {
       return InAppWebView(
+        shouldOverrideUrlLoading: context.read<ApplicationScreenBloc>().onOverrideUrl,
         initialOptions: _inAppWebViewGroupOptions,
         androidOnPermissionRequest: (_, __, resources) async {
           return PermissionRequestResponse(

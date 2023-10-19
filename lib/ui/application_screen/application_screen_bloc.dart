@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:poc_glow/ui/application_screen/application_screen_state.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/model/loan_options.dart';
 import '../../data/model/payment_session_data_model.dart';
@@ -49,6 +51,19 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
 
   void onLoadStop() {
     _isLoadCompleted = true;
+  }
+
+  Future<NavigationActionPolicy> onOverrideUrl(InAppWebViewController _, NavigationAction op) async {
+    final url = op.request.url;
+
+    if (url != null && await canLaunchUrl(url)) {
+      await launchUrl(
+        url,
+      );
+      return NavigationActionPolicy.CANCEL;
+    }
+
+    return NavigationActionPolicy.ALLOW;
   }
 
   void onBackButtonPressed() {
