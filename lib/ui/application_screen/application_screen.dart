@@ -30,8 +30,7 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         allowFileAccessFromFileURLs: false,
         allowUniversalAccessFromFileURLs: false),
     ios: IOSInAppWebViewOptions(
-      contentInsetAdjustmentBehavior:
-      IOSUIScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
+      contentInsetAdjustmentBehavior: IOSUIScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
       applePayAPIEnabled: true,
     ),
     android: AndroidInAppWebViewOptions(
@@ -62,10 +61,8 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         listener: (BuildContext context, state) async {
           if (state is ApplicationScreenBackButtonPressedState) {
             _webViewController?.evaluateJavascript(source: """
-              console.log(window);
               window.dispatchEvent(new Event('BACK_BUTTON_CLICKED'));             
             """);
-            print("_webViewController?.evaluateJavascript done.");
           }
         },
         builder: (_, state) {
@@ -98,9 +95,6 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     if (state is ApplicationScreenUrlLoadedState) {
       return InAppWebView(
         initialOptions: _inAppWebViewGroupOptions,
-        onConsoleMessage: (a, b) {
-          print("onConsoleMessage - $b");
-        },
         androidOnPermissionRequest: (_, __, resources) async {
           return PermissionRequestResponse(
             resources: resources,
@@ -115,7 +109,6 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
           _webViewController?.addJavaScriptHandler(
             handlerName: "APPLICATION_COMPLETED",
             callback: (args) {
-              print("APPLICATION_COMPLETED");
               widget.onDone(Result.success);
             },
           );

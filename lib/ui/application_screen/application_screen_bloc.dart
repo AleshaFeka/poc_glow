@@ -41,8 +41,6 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
         body: jsonEncode(_buildMockBody()),
       );
 
-      print(jsonDecode(response.body)['application_url']);
-
       if (jsonDecode(response.body)['application_url'] != null) {
         emit(ApplicationScreenUrlLoadedState(appUrl: jsonDecode(response.body)['application_url']));
       }
@@ -51,7 +49,6 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
 
   void onLoadStop() {
     _isLoadCompleted = true;
-    print("onLoadStop - _isLoadCompleted - $_isLoadCompleted");
   }
 
   void onBackButtonPressed() {
