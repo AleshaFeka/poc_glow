@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:app_settings/app_settings.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,38 +17,67 @@ import '../../main.dart';
 class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
   LoanOptions? options;
   PaymentSessionDataModel? paymentData;
+
+  AppLifecycleListener? _listener;
   bool _isLoadCompleted = false;
+  bool _shouldCheckPermissionsAfterResume = false;
 
   ApplicationScreenBloc() : super(ApplicationScreenInitialState());
 
   void init() async {
     _isLoadCompleted = false;
+
+    _listener ??= AppLifecycleListener(
+      onResume: () async {
+        if (_shouldCheckPermissionsAfterResume) {
+          _shouldCheckPermissionsAfterResume = false;
+          _onAppResume();
+        }
+      },
+    );
+
+    _checkPermissionsAndLoadUrl();
+  }
+
+  Future<void> _checkPermissionsAndLoadUrl() async {
     emit(ApplicationScreenUrlLoadingState());
 
     final cameraPermission = await Permission.camera.request();
-    final microphonePermission = await Permission.microphone.request();
 
-    if (cameraPermission != PermissionStatus.granted || microphonePermission != PermissionStatus.granted) {
+    if (cameraPermission != PermissionStatus.granted) {
       emit(ApplicationScreenNoPermissionsGrantedState());
     } else {
-      var url = Uri.https(
-        baseUrl,
-        'api/ee/application/initialize',
-      );
-      var response = await http.post(
-        url,
-        headers: {
-          "Authorization": "Bearer ${paymentData?.token}",
-          "content-type": "application/json",
-          "Accept": "application/json",
-        },
-        body: jsonEncode(_buildMockBody()),
-      );
-
-      if (jsonDecode(response.body)['application_url'] != null) {
-        emit(ApplicationScreenUrlLoadedState(appUrl: jsonDecode(response.body)['application_url']));
-      }
+      await _loadAppUrl();
     }
+  }
+
+  Future<void> _onAppResume() async {
+    _checkPermissionsAndLoadUrl();
+  }
+
+  Future<void> _loadAppUrl() async {
+    var url = Uri.https(
+      baseUrl,
+      'api/ee/application/initialize',
+    );
+    var response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer ${paymentData?.token}",
+        "content-type": "application/json",
+        "Accept": "application/json",
+      },
+      body: jsonEncode(_buildMockBody()),
+    );
+
+    if (jsonDecode(response.body)['application_url'] != null) {
+      emit(ApplicationScreenUrlLoadedState(appUrl: jsonDecode(response.body)['application_url']));
+    }
+  }
+
+  Future<void> onOpenAppSettings() async {
+    _shouldCheckPermissionsAfterResume = true;
+    await AppSettings.openAppSettings(type: AppSettingsType.settings);
   }
 
   void onLoadStop() {
@@ -151,5 +182,9 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
         ]
       }
     };
+  }
+
+  void dispose() {
+    _listener?.dispose();
   }
 }

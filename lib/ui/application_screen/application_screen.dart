@@ -51,6 +51,12 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    context.read<ApplicationScreenBloc>().dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
@@ -90,7 +96,20 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
       return const Center(child: CircularProgressIndicator());
     }
     if (state is ApplicationScreenNoPermissionsGrantedState) {
-      return const Center(child: Text("No Permissions Granted."));
+      return Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("No Permissions Granted."),
+          const SizedBox(
+            height: 16,
+          ),
+          ElevatedButton(
+            onPressed: () => context.read<ApplicationScreenBloc>().onOpenAppSettings(),
+            child: const Text('Open App Settings'),
+          )
+        ],
+      ));
     }
     if (state is ApplicationScreenUrlLoadedState) {
       return InAppWebView(
