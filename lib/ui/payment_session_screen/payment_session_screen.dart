@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -76,17 +74,11 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
           child: InAppWebView(
             onWebViewCreated: (controller) async {
               _webViewController = controller;
+
               _webViewController?.addJavaScriptHandler(
-                  handlerName: "SELECT_LOAN_OPTION",
-                  callback: (args) {
-                    context.read<PaymentSessionBloc>().onLoanOptionsSelected(args);
-                    _webViewController?.evaluateJavascript(source: """
-                      window.flutter_inappwebview.callHandler(
-                        'SET_WEB_VIEW_HEIGHT_HANDLER', 
-                        {"webViewScrollHeight" :document.querySelector('div').scrollHeight}
-                      );
-                    """);
-                  });
+                handlerName: "SELECT_LOAN_OPTION",
+                callback: _onLoanOptionSelected,
+              );
 
               _webViewController?.addJavaScriptHandler(
                 handlerName: "SET_WEB_VIEW_HEIGHT_HANDLER",
@@ -103,7 +95,17 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
     return Container();
   }
 
-  _onHeightChanged(dynamic args) {
+  void _onLoanOptionSelected(List<dynamic> args) {
+    context.read<PaymentSessionBloc>().onLoanOptionsSelected(args);
+    _webViewController?.evaluateJavascript(source: """
+                      window.flutter_inappwebview.callHandler(
+                        'SET_WEB_VIEW_HEIGHT_HANDLER', 
+                        {"webViewScrollHeight" :document.querySelector('div').scrollHeight}
+                      );
+                    """);
+  }
+
+  void _onHeightChanged(dynamic args) {
     final data = args.first;
 
     if (data['webViewScrollHeight'] != null) {

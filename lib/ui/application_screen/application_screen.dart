@@ -93,75 +93,87 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
 
   Widget _buildContent(ApplicationScreenState state) {
     if (state is ApplicationScreenUrlLoadingState) {
-      return const Center(child: CircularProgressIndicator());
+      return _buildLoadingScreen();
     }
     if (state is ApplicationScreenNoPermissionsGrantedState) {
-      return Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("No Permissions Granted."),
-          const SizedBox(
-            height: 16,
-          ),
-          ElevatedButton(
-            onPressed: () => context.read<ApplicationScreenBloc>().onOpenAppSettings(),
-            child: const Text('Open App Settings'),
-          )
-        ],
-      ));
+      return _buildNoPermissionsGrantedScreen();
     }
     if (state is ApplicationScreenUrlLoadedState) {
-      return InAppWebView(
-        shouldOverrideUrlLoading: context.read<ApplicationScreenBloc>().onOverrideUrl,
-        initialOptions: _inAppWebViewGroupOptions,
-        androidOnPermissionRequest: (_, __, resources) async {
-          return PermissionRequestResponse(
-            resources: resources,
-            action: PermissionRequestResponseAction.GRANT,
-          );
-        },
-        onLoadStop: (_, __) {
-          context.read<ApplicationScreenBloc>().onLoadStop();
-        },
-        onWebViewCreated: (controller) async {
-          _webViewController = controller;
-          _webViewController?.addJavaScriptHandler(
-            handlerName: "APPLICATION_COMPLETED",
-            callback: (args) {
-              widget.onDone(Result.success);
-            },
-          );
-          _webViewController?.addJavaScriptHandler(
-            handlerName: "APPLICATION_PAUSED",
-            callback: (args) {
-              widget.onDone(Result.pending);
-            },
-          );
-          _webViewController?.addJavaScriptHandler(
-            handlerName: "APPLICATION_CANCEL_ACCEPTED",
-            callback: (args) {
-              widget.onDone(Result.cancelAccepted);
-            },
-          );
-          _webViewController?.addJavaScriptHandler(
-            handlerName: "APPLICATION_PAUSE_ACCEPTED",
-            callback: (args) {
-              widget.onDone(Result.pauseAccepted);
-            },
-          );
-          _webViewController?.addJavaScriptHandler(
-            handlerName: "APPLICATION_CANCELLED",
-            callback: (args) {
-              widget.onDone(Result.fail);
-            },
-          );
-        },
-        initialUrlRequest: URLRequest(
-          url: Uri.parse(state.appUrl),
-        ),
-      );
+      return _buildWebViewScreen(state);
     }
     return Container();
+  }
+
+  Widget _buildWebViewScreen(ApplicationScreenUrlLoadedState state) {
+    return InAppWebView(
+      shouldOverrideUrlLoading: context.read<ApplicationScreenBloc>().onOverrideUrl,
+      initialOptions: _inAppWebViewGroupOptions,
+      androidOnPermissionRequest: (_, __, resources) async {
+        return PermissionRequestResponse(
+          resources: resources,
+          action: PermissionRequestResponseAction.GRANT,
+        );
+      },
+      onLoadStop: (_, __) {
+        context.read<ApplicationScreenBloc>().onLoadStop();
+      },
+      onWebViewCreated: (controller) async {
+        _webViewController = controller;
+        _webViewController?.addJavaScriptHandler(
+          handlerName: "APPLICATION_COMPLETED",
+          callback: (args) {
+            widget.onDone(Result.success);
+          },
+        );
+        _webViewController?.addJavaScriptHandler(
+          handlerName: "APPLICATION_PAUSED",
+          callback: (args) {
+            widget.onDone(Result.pending);
+          },
+        );
+        _webViewController?.addJavaScriptHandler(
+          handlerName: "APPLICATION_CANCEL_ACCEPTED",
+          callback: (args) {
+            widget.onDone(Result.cancelAccepted);
+          },
+        );
+        _webViewController?.addJavaScriptHandler(
+          handlerName: "APPLICATION_PAUSE_ACCEPTED",
+          callback: (args) {
+            widget.onDone(Result.pauseAccepted);
+          },
+        );
+        _webViewController?.addJavaScriptHandler(
+          handlerName: "APPLICATION_CANCELLED",
+          callback: (args) {
+            widget.onDone(Result.fail);
+          },
+        );
+      },
+      initialUrlRequest: URLRequest(
+        url: Uri.parse(state.appUrl),
+      ),
+    );
+  }
+
+  Widget _buildNoPermissionsGrantedScreen() {
+    return Center(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("No Permissions Granted."),
+        const SizedBox(
+          height: 16,
+        ),
+        ElevatedButton(
+          onPressed: () => context.read<ApplicationScreenBloc>().onOpenAppSettings(),
+          child: const Text('Open App Settings'),
+        )
+      ],
+    ));
+  }
+
+  Widget _buildLoadingScreen() {
+    return const Center(child: CircularProgressIndicator());
   }
 }
