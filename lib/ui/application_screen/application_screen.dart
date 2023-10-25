@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:poc_glow/data/model/result.dart';
+import 'package:poc_glow/ui/main_screen_bloc.dart';
 
 import 'application_screen_bloc.dart';
 import 'application_screen_state.dart';
@@ -48,12 +49,19 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
   void initState() {
     super.initState();
     context.read<ApplicationScreenBloc>().init();
+    context.read<MainScreenBloc>().themeChangeNotifier.addListener(_onThemeChanged);
   }
+
+  void _onThemeChanged(brightness) {
+    print("ApplicationScreen OnThemeChanged - $brightness");
+  }
+
 
   @override
   void dispose() {
     super.dispose();
     context.read<ApplicationScreenBloc>().dispose();
+    context.read<MainScreenBloc>().themeChangeNotifier.removeListener(_onThemeChanged);
   }
 
   @override

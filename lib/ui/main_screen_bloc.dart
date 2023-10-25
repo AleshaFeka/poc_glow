@@ -1,13 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poc_glow/data/model/loan_options.dart';
 import 'package:poc_glow/data/model/result.dart';
+import 'package:poc_glow/util/theme_change_notifier.dart';
 
 import 'main_screen_state.dart';
 
 class MainScreenBloc extends Cubit<MainScreenState> {
   LoanOptions? _options;
+  ThemeChangeNotifier themeChangeNotifier;
 
-  MainScreenBloc() : super(CreatePaymentSessionState());
+  MainScreenBloc()
+      : themeChangeNotifier = ThemeChangeNotifier(),
+        super(CreatePaymentSessionState());
 
   void goToCreatePaymentSession(String token) {
     emit(PaymentSessionState(

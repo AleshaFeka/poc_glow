@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:poc_glow/data/model/loan_options.dart';
+import 'package:poc_glow/ui/main_screen_bloc.dart';
 import 'package:poc_glow/ui/payment_session_screen/payment_session_state.dart';
 
 import 'payment_session_bloc.dart';
@@ -24,10 +25,22 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
   InAppWebViewController? _webViewController;
   double _webViewContainerHeight = 2500;
 
+  void _onThemeChanged(brightness) {
+    print("PaymentSessionScreen OnThemeChanged - $brightness");
+  }
+
   @override
   void initState() {
     super.initState();
     context.read<PaymentSessionBloc>().init();
+    context.read<MainScreenBloc>().themeChangeNotifier.addListener(_onThemeChanged);
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    context.read<MainScreenBloc>().themeChangeNotifier.removeListener(_onThemeChanged);
   }
 
   @override
