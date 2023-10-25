@@ -33,16 +33,9 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
   void initState() {
     super.initState();
     context.read<PaymentSessionBloc>().init();
-    context.read<MainScreenBloc>().themeChangeNotifier.addListener(_onThemeChanged);
+    context.read<MainScreenBloc>().themeChangeNotifier.setSingleListener(_onThemeChanged);
   }
-
-
-  @override
-  void dispose() {
-    super.dispose();
-    context.read<MainScreenBloc>().themeChangeNotifier.removeListener(_onThemeChanged);
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

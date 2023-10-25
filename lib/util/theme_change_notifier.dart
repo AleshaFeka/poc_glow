@@ -2,38 +2,32 @@ import 'dart:ui';
 
 import 'package:flutter/scheduler.dart';
 
-typedef OnThemeChanged = void Function(Brightness);
+typedef ThemeChangedListener = void Function(Brightness);
 
 class ThemeChangeNotifier {
   PlatformDispatcher? _platformDispatcher;
 
-  final List<OnThemeChanged> _listeners = List.empty(growable: true);
+  ThemeChangedListener _singleListener = (_) {};
 
   ThemeChangeNotifier() {
     _platformDispatcher ??= SchedulerBinding.instance.platformDispatcher;
-    _addThemeChangeListener();
+    _addThemeChangeInternalListener();
   }
 
-  void addListener(OnThemeChanged listener) {
-    _listeners.add(listener);
+  void setSingleListener(ThemeChangedListener listener) {
+    _singleListener = listener;
   }
 
-  void removeListener(OnThemeChanged listener) {
-    _listeners.remove(listener);
-  }
-
-  void _addThemeChangeListener() {
+  void _addThemeChangeInternalListener() {
     _platformDispatcher?.onPlatformBrightnessChanged = () {
       var brightness = _platformDispatcher?.platformBrightness;
       if (brightness != null) {
-        onPlatformBrightnessChanged(brightness);
+        _onPlatformBrightnessChanged(brightness);
       }
     };
   }
 
-  void onPlatformBrightnessChanged(Brightness brightness) {
-    for (var listener in _listeners) {
-      listener(brightness);
-    }
+  void _onPlatformBrightnessChanged(Brightness brightness) {
+    _singleListener(brightness);
   }
 }

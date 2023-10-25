@@ -49,19 +49,17 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
   void initState() {
     super.initState();
     context.read<ApplicationScreenBloc>().init();
-    context.read<MainScreenBloc>().themeChangeNotifier.addListener(_onThemeChanged);
+    context.read<MainScreenBloc>().themeChangeNotifier.setSingleListener(_onThemeChanged);
   }
 
   void _onThemeChanged(brightness) {
     print("ApplicationScreen OnThemeChanged - $brightness");
   }
 
-
   @override
   void dispose() {
     super.dispose();
     context.read<ApplicationScreenBloc>().dispose();
-    context.read<MainScreenBloc>().themeChangeNotifier.removeListener(_onThemeChanged);
   }
 
   @override
