@@ -1,6 +1,14 @@
+import 'dart:ui';
+
 class ApplicationScreenState {}
 
 class ApplicationScreenInitialState extends ApplicationScreenState {}
+
+class ApplicationScreenThemeChangedState extends ApplicationScreenState {
+  final Brightness brightness;
+
+  ApplicationScreenThemeChangedState(this.brightness) : super();
+}
 
 class ApplicationScreenUrlLoadingState extends ApplicationScreenState {}
 

@@ -49,11 +49,9 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
   void initState() {
     super.initState();
     context.read<ApplicationScreenBloc>().init();
-    context.read<MainScreenBloc>().themeChangeNotifier.setSingleListener(_onThemeChanged);
-  }
-
-  void _onThemeChanged(brightness) {
-    print("ApplicationScreen OnThemeChanged - $brightness");
+    context.read<MainScreenBloc>().themeChangeNotifier.setSingleListener(
+          context.read<ApplicationScreenBloc>().onThemeChanged,
+        );
   }
 
   @override
@@ -72,10 +70,15 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
       child: BlocConsumer<ApplicationScreenBloc, ApplicationScreenState>(
         listener: (BuildContext context, state) async {
           if (state is ApplicationScreenBackButtonPressedState) {
-            _webViewController?.evaluateJavascript(source: """
-              window.dispatchEvent(new Event('BACK_BUTTON_CLICKED'));             
-            """);
+            _notifyBackButtonPressed();
           }
+
+          if (state is ApplicationScreenThemeChangedState) {
+            _notifyThemeChanged(state.brightness);
+          }
+        },
+        buildWhen: (_, currentState) {
+          return currentState is! ApplicationScreenThemeChangedState;
         },
         builder: (_, state) {
           return Expanded(
@@ -95,6 +98,19 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         },
       ),
     );
+  }
+
+  void _notifyBackButtonPressed() {
+    _webViewController?.evaluateJavascript(source: """
+              window.dispatchEvent(new Event('BACK_BUTTON_CLICKED'));             
+            """);
+  }
+
+  void _notifyThemeChanged(Brightness brightness) {
+    final themeName = brightness == Brightness.light ? "LIGHT" : "DARK";
+    _webViewController?.evaluateJavascript(source: """
+              window.dispatchEvent(new Event('THEME_CHANGED', {"theme" : "$themeName"}));             
+    """);
   }
 
   Widget _buildContent(ApplicationScreenState state) {
@@ -122,6 +138,7 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
       },
       onLoadStop: (_, __) {
         context.read<ApplicationScreenBloc>().onLoadStop();
+        _notifyThemeChanged(context.read<MainScreenBloc>().themeChangeNotifier.getCurrentSystemBrightness());
       },
       onWebViewCreated: (controller) async {
         _webViewController = controller;

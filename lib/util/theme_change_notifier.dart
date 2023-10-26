@@ -14,6 +14,10 @@ class ThemeChangeNotifier {
     _addThemeChangeInternalListener();
   }
 
+  Brightness getCurrentSystemBrightness() {
+    return SchedulerBinding.instance.platformDispatcher.platformBrightness;
+  }
+
   void setSingleListener(ThemeChangedListener listener) {
     _singleListener = listener;
   }

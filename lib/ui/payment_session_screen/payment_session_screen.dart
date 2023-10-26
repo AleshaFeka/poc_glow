@@ -22,20 +22,45 @@ class PaymentSessionScreen extends StatefulWidget {
 }
 
 class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
+  final InAppWebViewGroupOptions _inAppWebViewGroupOptions = InAppWebViewGroupOptions(
+    crossPlatform: InAppWebViewOptions(
+        mediaPlaybackRequiresUserGesture: false,
+        preferredContentMode: UserPreferredContentMode.MOBILE,
+        supportZoom: false,
+        javaScriptEnabled: true,
+        transparentBackground: false,
+        useShouldInterceptFetchRequest: false,
+        useShouldInterceptAjaxRequest: false,
+        useShouldOverrideUrlLoading: true,
+        allowFileAccessFromFileURLs: false,
+        allowUniversalAccessFromFileURLs: false),
+    ios: IOSInAppWebViewOptions(
+      contentInsetAdjustmentBehavior: IOSUIScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
+      applePayAPIEnabled: true,
+    ),
+    android: AndroidInAppWebViewOptions(
+      useHybridComposition: false,
+      useShouldInterceptRequest: true,
+      allowContentAccess: false,
+      mixedContentMode: AndroidMixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+      allowFileAccess: false,
+      domStorageEnabled: false,
+      geolocationEnabled: false,
+    ),
+  );
+
   InAppWebViewController? _webViewController;
   double _webViewContainerHeight = 2500;
-
-  void _onThemeChanged(brightness) {
-    print("PaymentSessionScreen OnThemeChanged - $brightness");
-  }
 
   @override
   void initState() {
     super.initState();
     context.read<PaymentSessionBloc>().init();
-    context.read<MainScreenBloc>().themeChangeNotifier.setSingleListener(_onThemeChanged);
+    context.read<MainScreenBloc>().themeChangeNotifier.setSingleListener(
+          context.read<PaymentSessionBloc>().onThemeChanged,
+        );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -48,6 +73,13 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
           if (state is PaymentSessionLoanOptionsSelectedState) {
             widget.onLoanOptionsSelected(state.options);
           }
+
+          if (state is PaymentSessionThemeChangedState) {
+            _notifyThemeChanged(state.brightness);
+          }
+        },
+        buildWhen: (_, currentState) {
+          return currentState is! PaymentSessionThemeChangedState;
         },
         builder: (_, state) {
           return Expanded(
@@ -69,6 +101,13 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
     );
   }
 
+  void _notifyThemeChanged(Brightness brightness) {
+    final themeName = brightness == Brightness.light ? "LIGHT" : "DARK";
+    _webViewController?.evaluateJavascript(source: """
+              window.dispatchEvent(new Event('THEME_CHANGED', {"theme" : "$themeName"}));             
+    """);
+  }
+
   Widget _buildContent(PaymentSessionState state) {
     if (state is PaymentSessionUrlLoadingState) {
       return const Center(child: CircularProgressIndicator());
@@ -78,6 +117,8 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
         child: SizedBox(
           height: _webViewContainerHeight,
           child: InAppWebView(
+            shouldOverrideUrlLoading: context.read<PaymentSessionBloc>().onOverrideUrl,
+            initialOptions: _inAppWebViewGroupOptions,
             onWebViewCreated: (controller) async {
               _webViewController = controller;
 
@@ -90,6 +131,9 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
                 handlerName: "SET_WEB_VIEW_HEIGHT_HANDLER",
                 callback: _onHeightChanged,
               );
+            },
+            onLoadStop: (_, __) {
+              _notifyThemeChanged(context.read<MainScreenBloc>().themeChangeNotifier.getCurrentSystemBrightness());
             },
             initialUrlRequest: URLRequest(
               url: Uri.parse(state.loanUrl),

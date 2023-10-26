@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:http/http.dart' as http;
 import 'package:poc_glow/data/model/loan_options.dart';
 import 'package:poc_glow/main.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/model/payment_session_data_model.dart';
 import 'payment_session_state.dart';
@@ -20,6 +22,23 @@ class PaymentSessionBloc extends Cubit<PaymentSessionState> {
     if (model?.loanUrl != null) {
       emit(PaymentSessionUrlLoadedState(model!.loanUrl));
     }
+  }
+
+  void onThemeChanged(brightness) {
+    emit(PaymentSessionThemeChangedState(brightness));
+  }
+
+  Future<NavigationActionPolicy> onOverrideUrl(InAppWebViewController _, NavigationAction op) async {
+    final url = op.request.url;
+
+    if (url != null && await canLaunchUrl(url)) {
+      await launchUrl(
+        url,
+      );
+      return NavigationActionPolicy.CANCEL;
+    }
+
+    return NavigationActionPolicy.ALLOW;
   }
 
   void onLoanOptionsSelected(List<dynamic> args) {

@@ -4,14 +4,13 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:poc_glow/ui/application_screen/application_screen_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/model/loan_options.dart';
 import '../../data/model/payment_session_data_model.dart';
-import 'package:http/http.dart' as http;
-
 import '../../main.dart';
 
 class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
@@ -37,6 +36,10 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
     );
 
     _checkPermissionsAndLoadUrl();
+  }
+
+  void onThemeChanged(brightness) {
+    emit(ApplicationScreenThemeChangedState(brightness));
   }
 
   Future<void> _checkPermissionsAndLoadUrl() async {
