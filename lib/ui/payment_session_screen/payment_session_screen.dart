@@ -36,7 +36,7 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
         allowUniversalAccessFromFileURLs: false),
     ios: IOSInAppWebViewOptions(
       contentInsetAdjustmentBehavior: IOSUIScrollViewContentInsetAdjustmentBehavior.AUTOMATIC,
-      applePayAPIEnabled: true,
+      applePayAPIEnabled: false,
     ),
     android: AndroidInAppWebViewOptions(
       useHybridComposition: false,

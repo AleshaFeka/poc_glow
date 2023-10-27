@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/widgets.dart';
@@ -91,9 +92,12 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
     final url = op.request.url;
 
     if (url != null && await canLaunchUrl(url)) {
-      await launchUrl(
-        url,
-      );
+
+      if (Platform.isIOS && op.iosWKNavigationType != IOSWKNavigationType.LINK_ACTIVATED) {
+        return NavigationActionPolicy.ALLOW;
+      }
+
+      await launchUrl(url);
       return NavigationActionPolicy.CANCEL;
     }
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -32,9 +33,12 @@ class PaymentSessionBloc extends Cubit<PaymentSessionState> {
     final url = op.request.url;
 
     if (url != null && await canLaunchUrl(url)) {
-      await launchUrl(
-        url,
-      );
+
+      if (Platform.isIOS && op.iosWKNavigationType != IOSWKNavigationType.LINK_ACTIVATED) {
+        return NavigationActionPolicy.ALLOW;
+      }
+
+      await launchUrl(url);
       return NavigationActionPolicy.CANCEL;
     }
 
