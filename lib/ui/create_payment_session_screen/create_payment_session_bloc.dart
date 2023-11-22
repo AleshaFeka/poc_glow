@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -25,7 +28,9 @@ class CreatePaymentSessionBloc extends Cubit<CreatePaymentSessionState> {
       emit(LoadedCreatePaymentSessionState(_token as String));
     }
 */
+
     emit(LoadedCreatePaymentSessionState("token loaded"));
+    _registerCallback();
   }
 
   Future<String> _fetchToken() async {
@@ -53,23 +58,10 @@ class CreatePaymentSessionBloc extends Cubit<CreatePaymentSessionState> {
       final sharedDirectoryPath = await _getSharedDirectory();
 
       if (sharedDirectoryPath != null) {
-        final glowPocDir = Directory(sharedDirectoryPath + "/TestGlowDir");
-        print("glowPocDir.exists ${await glowPocDir.exists()}");
-
-        print("glowPocDir.create ${glowPocDir.path}");
-        glowPocDir.create(recursive: false);
-
-        final testFile = File('${glowPocDir.path}/test.txt');
-        testFile.create(recursive: false);
-        testFile.writeAsString("msg");
-        if (!(await glowPocDir.exists())) {
-        }
-
-        _startLoadPdfFile();
+        _startLoadPdfFile("", sharedDirectoryPath);
       } else {
         emit(StoragePermissionDeniedStateState());
       }
-
     } else {
       emit(StoragePermissionDeniedStateState());
     }
@@ -97,8 +89,66 @@ class CreatePaymentSessionBloc extends Cubit<CreatePaymentSessionState> {
     return storagePermission == PermissionStatus.granted;
   }
 
-  void _startLoadPdfFile() {
-    print("_startLoadPdfFile");
+  Future<void> _startLoadPdfFile(String urlString, String targetDirPath) async {
     emit(PdfLoadInProgressState());
+
+    FlutterDownloader.enqueue(
+      fileName: "glowDownload_${DateTime.now().millisecond}.pdf",
+      url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      headers: {},
+      savedDir: targetDirPath,
+      saveInPublicStorage: false,
+      showNotification: false,
+      openFileFromNotification: false,
+    );
+  }
+
+  void _proceedPdfDownloadingResult(DownloadTaskStatus status, String taskId) {
+    if (status == DownloadTaskStatus.complete) {
+      _proceedPdfDownloadSuccess(taskId);
+    }
+    if (status == DownloadTaskStatus.failed) {
+      _proceedPdfDownloadFailed(taskId);
+    }
+    if (status == DownloadTaskStatus.running) {
+      _proceedPdfInProgress(taskId);
+    }
+  }
+
+  void _proceedPdfDownloadSuccess(String taskId) {
+    emit(PdfLoadSuccessState());
+    FlutterDownloader.open(taskId: taskId);
+  }
+
+  void _proceedPdfDownloadFailed(String taskId) {
+    emit(PdfLoadFailedState());
+  }
+
+  void _proceedPdfInProgress(String taskId) {
+    emit(PdfLoadInProgressState());
+  }
+
+  void dispose() {
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
+  }
+
+  void _registerCallback() {
+    ReceivePort _port = ReceivePort();
+
+    IsolateNameServer.registerPortWithName(_port.sendPort, 'downloader_send_port');
+    _port.listen((dynamic data) {
+      _proceedPdfDownloadingResult(
+        DownloadTaskStatus.values[data[1]],
+        data[0],
+      );
+    });
+
+    FlutterDownloader.registerCallback(downloadCallback);
+  }
+
+  @pragma('vm:entry-point')
+  static void downloadCallback(String id, int status, int progress) {
+    final SendPort? send = IsolateNameServer.lookupPortByName('downloader_send_port');
+    send?.send([id, status, progress]);
   }
 }

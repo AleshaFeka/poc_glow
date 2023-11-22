@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:poc_glow/ui/main_screen_provider.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await FlutterDownloader.initialize(
+      debug: true,
+      ignoreSsl: true
+  );
+
   runApp(const MyApp());
 }
 
