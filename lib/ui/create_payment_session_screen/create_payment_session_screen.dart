@@ -30,27 +30,63 @@ class CreatePaymentSessionScreen extends StatelessWidget {
       },
       child: BlocBuilder<CreatePaymentSessionBloc, CreatePaymentSessionState>(builder: (context, state) {
         return Expanded(
-          child: Center(
-            child: SizedBox(
-              width: 188,
-              child: GlowButton(
-                EdgeInsets.zero,
-                child: state is LoadedCreatePaymentSessionState
-                    ? const Text("Create Payment")
-                    : const CircularProgressIndicator(
-                        color: Colors.grey,
-                      ),
-                isAccent: true,
-                onPressed: state is LoadedCreatePaymentSessionState
-                    ? () {
-                        onPressed(state.token);
-                      }
-                    : null,
-              ),
-            ),
-          ),
+          child: state is! LoadedCreatePaymentSessionState
+              ? _buildPdfTestState(state)
+              : Center(
+                  child: SizedBox(
+                    width: 188,
+                    child: GlowButton(
+                      EdgeInsets.zero,
+                      child: state is LoadedCreatePaymentSessionState
+                          ? const Text("Create Payment")
+                          : const CircularProgressIndicator(
+                              color: Colors.grey,
+                            ),
+                      isAccent: true,
+                      onPressed: state is LoadedCreatePaymentSessionState
+                          ? () {
+                              context.read<CreatePaymentSessionBloc>().startPdfProcessing("test url");
+//                              onPressed(state.token);
+                            }
+                          : null,
+                    ),
+                  ),
+                ),
         );
       }),
     );
+  }
+
+  Widget _buildPdfTestState(CreatePaymentSessionState state) {
+    Widget resultWidget = Container();
+
+    switch (state.runtimeType) {
+      case CheckingStoragePermissionState:
+        resultWidget = const CircularProgressIndicator(color: Colors.grey,);
+        break;
+      case StoragePermissionDeniedStateState:
+        resultWidget = Container(
+          color: Colors.blue,
+          child: Text("PermissionDeniedStateState"),
+        );
+        break;
+      case PdfLoadInProgressState:
+        resultWidget = const CircularProgressIndicator(color: Colors.blue,);
+        break;
+      case PdfLoadFailedState:
+        resultWidget = Container(
+          color: Colors.yellow,
+          child: Text("PdfLoadFailedState"),
+        );
+        break;
+      case PdfLoadSuccessState:
+        resultWidget = Container(
+          color: Colors.orange,
+          child: Text("PdfLoadSuccessState"),
+        );
+        break;
+    }
+
+    return Center(child: resultWidget);
   }
 }
