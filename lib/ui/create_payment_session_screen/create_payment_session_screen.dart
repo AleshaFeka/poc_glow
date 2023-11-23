@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poc_glow/ui/create_payment_session_screen/create_payment_session_bloc.dart';
 import 'package:poc_glow/ui/shared_widgets/glow_button.dart';
-import 'package:poc_glow/ui/shared_widgets/pdf_downloader_helper/pdf_downloader_helper_bloc.dart';
-import 'package:poc_glow/ui/shared_widgets/pdf_downloader_helper/pdf_downloader_helper_widget.dart';
 
 import '../../main.dart';
 import 'create_payment_session_state.dart';
@@ -32,27 +30,22 @@ class CreatePaymentSessionScreen extends StatelessWidget {
       },
       child: BlocBuilder<CreatePaymentSessionBloc, CreatePaymentSessionState>(builder: (_, state) {
         return Expanded(
-          child: PdfDownloaderHelperWidget(
-            child: Center(
-              child: SizedBox(
-                width: 188,
-                child: GlowButton(
-                  EdgeInsets.zero,
-                  child: state is LoadedCreatePaymentSessionState
-                      ? const Text("Create Payment")
-                      : const CircularProgressIndicator(
-                          color: Colors.grey,
-                        ),
-                  isAccent: true,
-                  onPressed: state is LoadedCreatePaymentSessionState
-                      ? () {
-                    context.read<PdfDownloaderHelperBloc>().startPdfProcessing(
-                                "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                              );
-//                              onPressed(state.token);
-                        }
-                      : null,
-                ),
+          child: Center(
+            child: SizedBox(
+              width: 188,
+              child: GlowButton(
+                EdgeInsets.zero,
+                child: state is LoadedCreatePaymentSessionState
+                    ? const Text("Create Payment")
+                    : const CircularProgressIndicator(
+                        color: Colors.grey,
+                      ),
+                isAccent: true,
+                onPressed: state is LoadedCreatePaymentSessionState
+                    ? () {
+                        onPressed(state.token);
+                      }
+                    : null,
               ),
             ),
           ),

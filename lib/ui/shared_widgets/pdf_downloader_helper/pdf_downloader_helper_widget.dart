@@ -19,10 +19,20 @@ class _PdfDownloaderHelperWidgetState extends State<PdfDownloaderHelperWidget> {
   bool successVisibility = false;
   bool showIconSuccess = false;
 
+  PdfDownloaderHelperBloc? _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = context.read<PdfDownloaderHelperBloc>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PdfDownloaderHelperBloc, PdfDownloadingState>(builder: (_, state) {
-      return Stack(children: [widget.child, _buildPdfTestState(state)]);
+      return Stack(
+        children: [widget.child, _buildPdfTestState(state)],
+      );
     });
   }
 
@@ -80,7 +90,7 @@ class _PdfDownloaderHelperWidgetState extends State<PdfDownloaderHelperWidget> {
 
   @override
   void dispose() {
-    context.read<PdfDownloaderHelperBloc>().dispose();
+    _bloc?.dispose();
     super.dispose();
   }
 }

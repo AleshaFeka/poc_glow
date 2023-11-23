@@ -93,6 +93,7 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
 
     if (url != null && await canLaunchUrl(url)) {
 
+      print("onOverrideUrl - $url");
       if (Platform.isIOS && op.iosWKNavigationType != IOSWKNavigationType.LINK_ACTIVATED) {
         return NavigationActionPolicy.ALLOW;
       }

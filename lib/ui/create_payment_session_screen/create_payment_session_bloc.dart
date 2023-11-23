@@ -20,8 +20,6 @@ class CreatePaymentSessionBloc extends Cubit<CreatePaymentSessionState> {
     if (_token != null) {
       emit(LoadedCreatePaymentSessionState(_token as String));
     }
-
-    emit(LoadedCreatePaymentSessionState("token loaded"));
   }
 
   Future<String> _fetchToken() async {
