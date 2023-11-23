@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,14 +16,13 @@ class PdfDownloaderHelperWidget extends StatefulWidget {
 }
 
 class _PdfDownloaderHelperWidgetState extends State<PdfDownloaderHelperWidget> {
+  bool successVisibility = false;
+  bool showIconSuccess = false;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PdfDownloaderHelperBloc, PdfDownloadingState>(builder: (_, state) {
-      return Stack(children: [
-        widget.child,
-        _buildPdfTestState(state)
-      ]);
+      return Stack(children: [widget.child, _buildPdfTestState(state)]);
     });
   }
 
@@ -36,26 +37,41 @@ class _PdfDownloaderHelperWidgetState extends State<PdfDownloaderHelperWidget> {
         break;
       case StoragePermissionDeniedStateState:
         resultWidget = Container(
-          color: Colors.blue,
+          color: Colors.red,
           child: Text("PermissionDeniedStateState"),
         );
         break;
       case PdfLoadInProgressState:
+        successVisibility = true;
+        showIconSuccess = true;
         resultWidget = const CircularProgressIndicator(
           color: Colors.blue,
         );
         break;
       case PdfLoadFailedState:
         resultWidget = Container(
-          color: Colors.yellow,
+          color: Colors.red,
           child: Text("PdfLoadFailedState"),
         );
         break;
       case PdfLoadSuccessState:
-        resultWidget = Container(
-          color: Colors.orange,
-          child: Text("PdfLoadSuccessState"),
-        );
+        if (showIconSuccess) {
+          Timer(const Duration(milliseconds: 500), () {
+            setState(() {
+              successVisibility = false;
+            });
+          });
+          resultWidget = AnimatedOpacity(
+            opacity: successVisibility ? 1 : 0,
+            duration: const Duration(milliseconds: 1000),
+            onEnd: () {
+              showIconSuccess = false;
+            },
+            child: Image.asset("assets/images/ic_success.png"),
+          );
+        } else {
+          const Placeholder();
+        }
         break;
     }
 

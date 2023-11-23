@@ -67,8 +67,6 @@ class PdfDownloaderHelperBloc extends Cubit<PdfDownloadingState> {
 
   void _proceedPdfDownloadingResult(DownloadTaskStatus status, String taskId) {
     if (status == DownloadTaskStatus.complete) {
-      print("_proceedPdfDownloadSuccess id - $taskId");
-
       _proceedPdfDownloadSuccess(taskId);
     }
     if (status == DownloadTaskStatus.failed) {
@@ -115,10 +113,6 @@ class PdfDownloaderHelperBloc extends Cubit<PdfDownloadingState> {
 
     IsolateNameServer.registerPortWithName(_port.sendPort, 'downloader_send_port');
     _port.listen((dynamic data) {
-      if ((data[1] as int) == 3) {
-        print("taskId - ${data[0]}");
-      }
-
       _proceedPdfDownloadingResult(
         DownloadTaskStatus.values[data[1]],
         data[0],
