@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poc_glow/ui/create_payment_session_screen/create_payment_session_bloc.dart';
 import 'package:poc_glow/ui/shared_widgets/glow_button.dart';
+import 'package:poc_glow/ui/shared_widgets/pdf_downloader_helper/pdf_downloader_helper_bloc.dart';
+import 'package:poc_glow/ui/shared_widgets/pdf_downloader_helper/pdf_downloader_helper_widget.dart';
 
 import '../../main.dart';
 import 'create_payment_session_state.dart';
@@ -28,65 +30,34 @@ class CreatePaymentSessionScreen extends StatelessWidget {
         onBackButtonPressed();
         return false;
       },
-      child: BlocBuilder<CreatePaymentSessionBloc, CreatePaymentSessionState>(builder: (context, state) {
+      child: BlocBuilder<CreatePaymentSessionBloc, CreatePaymentSessionState>(builder: (_, state) {
         return Expanded(
-          child: state is! LoadedCreatePaymentSessionState
-              ? _buildPdfTestState(state)
-              : Center(
-                  child: SizedBox(
-                    width: 188,
-                    child: GlowButton(
-                      EdgeInsets.zero,
-                      child: state is LoadedCreatePaymentSessionState
-                          ? const Text("Create Payment")
-                          : const CircularProgressIndicator(
-                              color: Colors.grey,
-                            ),
-                      isAccent: true,
-                      onPressed: state is LoadedCreatePaymentSessionState
-                          ? () {
-                              context.read<CreatePaymentSessionBloc>().startPdfProcessing("test url");
+          child: PdfDownloaderHelperWidget(
+            child: Center(
+              child: SizedBox(
+                width: 188,
+                child: GlowButton(
+                  EdgeInsets.zero,
+                  child: state is LoadedCreatePaymentSessionState
+                      ? const Text("Create Payment")
+                      : const CircularProgressIndicator(
+                          color: Colors.grey,
+                        ),
+                  isAccent: true,
+                  onPressed: state is LoadedCreatePaymentSessionState
+                      ? () {
+                    context.read<PdfDownloaderHelperBloc>().startPdfProcessing(
+                                "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                              );
 //                              onPressed(state.token);
-                            }
-                          : null,
-                    ),
-                  ),
+                        }
+                      : null,
                 ),
+              ),
+            ),
+          ),
         );
       }),
     );
-  }
-
-  Widget _buildPdfTestState(CreatePaymentSessionState state) {
-    Widget resultWidget = Container();
-
-    switch (state.runtimeType) {
-      case CheckingStoragePermissionState:
-        resultWidget = const CircularProgressIndicator(color: Colors.grey,);
-        break;
-      case StoragePermissionDeniedStateState:
-        resultWidget = Container(
-          color: Colors.blue,
-          child: Text("PermissionDeniedStateState"),
-        );
-        break;
-      case PdfLoadInProgressState:
-        resultWidget = const CircularProgressIndicator(color: Colors.blue,);
-        break;
-      case PdfLoadFailedState:
-        resultWidget = Container(
-          color: Colors.yellow,
-          child: Text("PdfLoadFailedState"),
-        );
-        break;
-      case PdfLoadSuccessState:
-        resultWidget = Container(
-          color: Colors.orange,
-          child: Text("PdfLoadSuccessState"),
-        );
-        break;
-    }
-
-    return Center(child: resultWidget);
   }
 }

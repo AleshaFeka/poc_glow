@@ -11,17 +11,3 @@ class LoadedCreatePaymentSessionState  extends CreatePaymentSessionState {
 }
 
 class ErrorCreatePaymentSessionState  extends CreatePaymentSessionState{}
-
-
-abstract class PdfProcessingState extends CreatePaymentSessionState {}
-
-class CheckingStoragePermissionState extends PdfProcessingState {}
-
-class StoragePermissionDeniedStateState extends PdfProcessingState {}
-
-class PdfLoadInProgressState extends PdfProcessingState {}
-
-class PdfLoadFailedState extends PdfProcessingState {}
-
-class PdfLoadSuccessState extends PdfProcessingState {}
-
