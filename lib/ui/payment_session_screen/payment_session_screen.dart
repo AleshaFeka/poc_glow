@@ -4,8 +4,6 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:poc_glow/data/model/loan_options.dart';
 import 'package:poc_glow/ui/main_screen_bloc.dart';
 import 'package:poc_glow/ui/payment_session_screen/payment_session_state.dart';
-import 'package:poc_glow/ui/shared_widgets/pdf_downloader_helper/pdf_downloader_helper_bloc.dart';
-import 'package:poc_glow/ui/shared_widgets/pdf_downloader_helper/pdf_downloader_helper_widget.dart';
 
 import 'payment_session_bloc.dart';
 
@@ -116,31 +114,29 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
     }
     if (state is PaymentSessionUrlReadyState) {
       return SingleChildScrollView(
-        child: PdfDownloaderHelperWidget(
-          child: SizedBox(
-            height: _webViewContainerHeight,
-            child: InAppWebView(
-              shouldOverrideUrlLoading: context.read<PaymentSessionBloc>().onOverrideUrl,
-              initialOptions: _inAppWebViewGroupOptions,
-              onWebViewCreated: (controller) async {
-                _webViewController = controller;
+        child: SizedBox(
+          height: _webViewContainerHeight,
+          child: InAppWebView(
+            shouldOverrideUrlLoading: context.read<PaymentSessionBloc>().onOverrideUrl,
+            initialOptions: _inAppWebViewGroupOptions,
+            onWebViewCreated: (controller) async {
+              _webViewController = controller;
 
-                _webViewController?.addJavaScriptHandler(
-                  handlerName: "SELECT_LOAN_OPTION",
-                  callback: _onLoanOptionSelected,
-                );
+              _webViewController?.addJavaScriptHandler(
+                handlerName: "SELECT_LOAN_OPTION",
+                callback: _onLoanOptionSelected,
+              );
 
-                _webViewController?.addJavaScriptHandler(
-                  handlerName: "SET_WEB_VIEW_HEIGHT_HANDLER",
-                  callback: _onHeightChanged,
-                );
-              },
-              onLoadStop: (_, __) {
-                _notifyThemeChanged(context.read<MainScreenBloc>().themeChangeNotifier.getCurrentSystemBrightness());
-              },
-              initialUrlRequest: URLRequest(
-                url: Uri.parse(state.loanUrl),
-              ),
+              _webViewController?.addJavaScriptHandler(
+                handlerName: "SET_WEB_VIEW_HEIGHT_HANDLER",
+                callback: _onHeightChanged,
+              );
+            },
+            onLoadStop: (_, __) {
+              _notifyThemeChanged(context.read<MainScreenBloc>().themeChangeNotifier.getCurrentSystemBrightness());
+            },
+            initialUrlRequest: URLRequest(
+              url: Uri.parse(state.loanUrl),
             ),
           ),
         ),
@@ -150,10 +146,7 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
   }
 
   void _onLoanOptionSelected(List<dynamic> args) {
-//    context.read<PaymentSessionBloc>().onLoanOptionsSelected(args);
-    context.read<PdfDownloaderHelperBloc>().startPdfProcessing(
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-    );
+    context.read<PaymentSessionBloc>().onLoanOptionsSelected(args);
 
     _webViewController?.evaluateJavascript(source: """
                       window.flutter_inappwebview.callHandler(

@@ -8,23 +8,30 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:poc_glow/ui/application_screen/application_screen_state.dart';
+import 'package:poc_glow/ui/shared_widgets/pdf_downloader_helper/pdf_downloader_helper_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/model/loan_options.dart';
 import '../../data/model/payment_session_data_model.dart';
 import '../../main.dart';
 
+const _pdfUrlPattern = "/api/agreement/pdf/authorised";
+const _pdfUrlPostfix = ".pdf";
+
 class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
+
+  PdfDownloaderHelperBloc? _pdfDownloaderBloc;
   LoanOptions? options;
   PaymentSessionDataModel? paymentData;
-
   AppLifecycleListener? _listener;
+
   bool _isLoadCompleted = false;
   bool _shouldCheckPermissionsAfterResume = false;
 
   ApplicationScreenBloc() : super(ApplicationScreenInitialState());
 
-  void init() async {
+  void init(PdfDownloaderHelperBloc bloc) async {
+    _pdfDownloaderBloc = bloc;
     _isLoadCompleted = false;
 
     _listener ??= AppLifecycleListener(
@@ -93,7 +100,11 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
 
     if (url != null && await canLaunchUrl(url)) {
 
-      print("onOverrideUrl - $url");
+      if (url.toString().contains(_pdfUrlPattern) || url.toString().endsWith(_pdfUrlPostfix)) {
+        _pdfDownloaderBloc?.startPdfProcessing(url.toString());
+        return NavigationActionPolicy.CANCEL;
+      }
+
       if (Platform.isIOS && op.iosWKNavigationType != IOSWKNavigationType.LINK_ACTIVATED) {
         return NavigationActionPolicy.ALLOW;
       }
