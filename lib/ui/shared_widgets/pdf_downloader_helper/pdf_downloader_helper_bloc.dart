@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
@@ -47,7 +48,12 @@ class PdfDownloaderHelperBloc extends Cubit<PdfDownloadingState> {
   }
 
   Future<bool> _checkStoragePermission() async {
-    final storagePermission = await Permission.storage.request();
+    AndroidDeviceInfo android = await DeviceInfoPlugin().androidInfo;
+
+    final storagePermission = android.version.sdkInt < 33
+        ? await Permission.storage.request()
+        : PermissionStatus.granted;
+
     return storagePermission == PermissionStatus.granted;
   }
 
