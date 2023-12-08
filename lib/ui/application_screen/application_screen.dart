@@ -172,6 +172,21 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
           _webViewController?.addJavaScriptHandler(
             handlerName: "APPLICATION_CANCELLED",
             callback: (args) {
+              print("APPLICATION_CANCELLED");
+              widget.onDone(Result.fail);
+            },
+          );
+          _webViewController?.addJavaScriptHandler(
+            handlerName: "APPLICATION_CANCEL_REQUEST",
+            callback: (args) {
+              print("APPLICATION_CANCEL_REQUEST");
+              widget.onDone(Result.fail);
+            },
+          );
+          _webViewController?.addJavaScriptHandler(
+            handlerName: "APPLICATION_DECLINED",
+            callback: (args) {
+              print("APPLICATION_DECLINED");
               widget.onDone(Result.fail);
             },
           );
