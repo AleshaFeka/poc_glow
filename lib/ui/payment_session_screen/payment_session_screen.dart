@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -117,6 +119,10 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
         child: SizedBox(
           height: _webViewContainerHeight,
           child: InAppWebView(
+            gestureRecognizers: {
+              Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer()),
+              Factory<LongPressGestureRecognizer>(() => LongPressGestureRecognizer()),
+            },
             shouldOverrideUrlLoading: context.read<PaymentSessionBloc>().onOverrideUrl,
             initialOptions: _inAppWebViewGroupOptions,
             onWebViewCreated: (controller) async {
