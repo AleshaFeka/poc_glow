@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poc_glow/ui/application_screen/application_screen_bloc.dart';
-import 'package:poc_glow/ui/main_screen_bloc.dart';
 import 'package:poc_glow/ui/create_payment_session_screen/create_payment_session_screen.dart';
 import 'package:poc_glow/ui/final_screen/final_screen.dart';
+import 'package:poc_glow/ui/main_screen_bloc.dart';
 import 'package:poc_glow/ui/payment_session_screen/payment_session_screen.dart';
 
 import 'application_screen/application_screen.dart';
@@ -67,6 +67,7 @@ class _MainScreenState extends State<MainScreen> {
         );
       case PaymentSessionState:
         _paymentSessionBloc.token = (state as PaymentSessionState).token;
+        _paymentSessionBloc.themeName = context.read<MainScreenBloc>().isDarkTheme ? "dark" : "light";
         return BlocProvider.value(
           value: _paymentSessionBloc,
           child: PaymentSessionScreen(
@@ -81,6 +82,7 @@ class _MainScreenState extends State<MainScreen> {
       case ApplicationState:
         _applicationScreenBloc.options = (state as ApplicationState).options;
         _applicationScreenBloc.paymentData = _paymentSessionBloc.model;
+        _applicationScreenBloc.themeName = context.read<MainScreenBloc>().isDarkTheme ? "dark" : "light";
         return BlocProvider.value(
           value: _applicationScreenBloc,
           child: ApplicationScreen(
@@ -135,9 +137,18 @@ class _MainScreenState extends State<MainScreen> {
         ? null
         : AppBar(
             title: Row(
-              children: const [
-                BackButton(),
-                Text("Back"),
+              children: [
+                const BackButton(),
+                const Text("Back"),
+                const Spacer(),
+                Text("Dark Theme", style: Theme.of(context).textTheme.bodyLarge),
+                Checkbox(
+                  value: context.read<MainScreenBloc>().isDarkTheme,
+                  onChanged: (isDarkTheme) {
+                    context.read<MainScreenBloc>().darkTheme = isDarkTheme ?? false;
+                    setState(() {});
+                  },
+                )
               ],
             ),
           );

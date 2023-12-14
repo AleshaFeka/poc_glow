@@ -24,6 +24,7 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
   LoanOptions? options;
   PaymentSessionDataModel? paymentData;
   AppLifecycleListener? _listener;
+  String themeName = "";
 
   bool _isLoadCompleted = false;
   bool _shouldCheckPermissionsAfterResume = false;
@@ -128,7 +129,7 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
     return {
       "session_id": paymentData?.sessionId ?? "",
       "locale": "en-GB",
-      "theme": "dark",
+      "theme": themeName,
       "notification_url": "The URL where glow will send notifications to",
       "loan_option": {
         "monthly_payment": options?.payload.monthlyPayment, // (required)
