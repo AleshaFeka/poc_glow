@@ -1,18 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poc_glow/data/model/loan_options.dart';
 import 'package:poc_glow/data/model/result.dart';
+import 'package:poc_glow/data/url_provider.dart';
 import 'package:poc_glow/util/theme_change_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'main_screen_state.dart';
 
 const _prefDarkThemeKey = "themeColor";
-const _prefEnvUrlKey = "envUrl";
 const _prefFirstNameKey = "firstName";
 const _prefLastNameKey = "lastName";
 const _prefBasketValueKey = "basketValue";
 
-const _envUrlDefaultValue = "platform-api.dev03.glowfinsvs.com";
 const _firstNameDefaultValue = "John";
 const _lastNameDefaultValue = "Smith";
 const _basketValueDefaultValue = "1900";
@@ -21,12 +20,6 @@ class MainScreenBloc extends Cubit<MainScreenState> {
   LoanOptions? _options;
   ThemeChangeNotifier themeChangeNotifier;
   SharedPreferences? _prefs;
-
-/*
-  String customerFirstName = _firstNameDefaultValue;
-  String customerLastName = _lastNameDefaultValue;
-  int basketValue = _basketValueDefaultValue;
-*/
 
   MainScreenBloc()
       : themeChangeNotifier = ThemeChangeNotifier(),
@@ -44,12 +37,10 @@ class MainScreenBloc extends Cubit<MainScreenState> {
 
 
   set customerFirstName(String newValue) {
-    print("customerFirstName - $newValue");
     _prefs?.setString(_prefFirstNameKey, newValue);
   }
 
   String get customerFirstName {
-    print("get customerFirstName - ${_prefs?.getString(_prefFirstNameKey)}");
     return _prefs?.getString(_prefFirstNameKey) ?? _firstNameDefaultValue;
   }
 
@@ -70,11 +61,11 @@ class MainScreenBloc extends Cubit<MainScreenState> {
   }
 
   set envUrl(String newValue) {
-    _prefs?.setString(_prefEnvUrlKey, newValue);
+    EeUrlProvider.setNewEnvUrl(newValue);
   }
 
   String get envUrl {
-    return _prefs?.getString(_prefEnvUrlKey) ?? _envUrlDefaultValue;
+    return EeUrlProvider.getCurrentEnvUrl();
   }
 
 

@@ -13,7 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/model/loan_options.dart';
 import '../../data/model/payment_session_data_model.dart';
-import '../../main.dart';
+import '../../data/url_provider.dart';
 
 const _pdfUrlPattern = "/api/agreement/pdf/authorised";
 const _pdfUrlPostfix = ".pdf";
@@ -69,9 +69,12 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
 
   Future<void> _loadAppUrl() async {
     var url = Uri.https(
-      baseUrl,
+      EeUrlProvider.getCurrentEnvUrl(),
       'api/ee/application/initialize',
     );
+
+    print("App screen. url - $url");
+
     var response = await http.post(
       url,
       headers: {

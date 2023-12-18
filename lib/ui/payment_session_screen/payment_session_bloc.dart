@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:http/http.dart' as http;
 import 'package:poc_glow/data/model/loan_options.dart';
-import 'package:poc_glow/main.dart';
+import 'package:poc_glow/data/url_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/model/payment_session_data_model.dart';
@@ -59,9 +59,13 @@ class PaymentSessionBloc extends Cubit<PaymentSessionState> {
 
   Future<PaymentSessionDataModel> _fetchData() async {
     var url = Uri.https(
-      baseUrl,
+      EeUrlProvider.getCurrentEnvUrl(),
       'api/ee/paymentSession',
     );
+
+
+    print("PaymentSession screen. url - $url");
+
     var response = await http.post(
       url,
       headers: {

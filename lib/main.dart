@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:poc_glow/ui/main_screen_provider.dart';
 
+import 'data/url_provider.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -12,7 +14,6 @@ void main() async {
 
 const primaryColor = Color(0xFF0066FF);
 const backgroundColor = Color(0xFFFFFFFF);
-const baseUrl = "platform-api.dev03.glowfinsvs.com";
 
 const Map<String, String> envUrls = {
   "dev03": "platform-api.dev03.glowfinsvs.com",
@@ -24,20 +25,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'PoC Glow',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-          elevation: 0,
-          foregroundColor: primaryColor,
-          backgroundColor: backgroundColor,
-        ),
-        scaffoldBackgroundColor: backgroundColor,
-      ),
-      home: const SafeArea(
-        child: MainScreenProvider(),
-      ),
-    );
+    return FutureBuilder(
+        future: EeUrlProvider.init(),
+        builder: (context, snapshot) {
+          return MaterialApp(
+            title: 'PoC Glow',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              appBarTheme: const AppBarTheme(
+                elevation: 0,
+                foregroundColor: primaryColor,
+                backgroundColor: backgroundColor,
+              ),
+              scaffoldBackgroundColor: backgroundColor,
+            ),
+            home: SafeArea(
+              child: snapshot.connectionState == ConnectionState.done
+                  ? const MainScreenProvider()
+                  : const Scaffold(body: Center(child: CircularProgressIndicator())),
+            ),
+          );
+        });
   }
 }

@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:poc_glow/data/url_provider.dart';
 
-import '../../main.dart';
 import 'create_payment_session_state.dart';
 
 class CreatePaymentSessionBloc extends Cubit<CreatePaymentSessionState> {
@@ -15,7 +15,7 @@ class CreatePaymentSessionBloc extends Cubit<CreatePaymentSessionState> {
 
   void init() async {
     emit(LoadingCreatePaymentSessionState());
-    _token ??= await _fetchToken();
+    _token = await _fetchToken();
 
     if (_token != null) {
       emit(LoadedCreatePaymentSessionState(_token as String));
@@ -24,7 +24,7 @@ class CreatePaymentSessionBloc extends Cubit<CreatePaymentSessionState> {
 
   Future<String> _fetchToken() async {
     var url = Uri.https(
-      baseUrl,
+      EeUrlProvider.getCurrentEnvUrl(),
       'api/auth/token',
     );
     var response = await http.post(

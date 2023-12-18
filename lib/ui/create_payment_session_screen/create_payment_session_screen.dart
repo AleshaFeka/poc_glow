@@ -65,6 +65,7 @@ class _CreatePaymentSessionScreenState extends State<CreatePaymentSessionScreen>
                           if (value != null) {
                             final newValue = envUrls.entries.firstWhere((element) => element.key == value).value;
                             context.read<MainScreenBloc>().envUrl = newValue;
+                            context.read<CreatePaymentSessionBloc>().init();
                             setState(() {});
                           }
                         },
@@ -78,35 +79,38 @@ class _CreatePaymentSessionScreenState extends State<CreatePaymentSessionScreen>
                     ],
                   ),
                   const SizedBox(
-                    height: 8,
+                    height: 16,
                   ),
                   TextField(
                     controller: firstNameEditingController,
                     onChanged: (v) => context.read<MainScreenBloc>().customerFirstName = v,
                     decoration: const InputDecoration(
+                      labelText: "Customer first name",
                       border: OutlineInputBorder(),
                       hintText: 'Customer first name',
                     ),
                   ),
                   const SizedBox(
-                    height: 8,
+                    height: 16,
                   ),
                   TextField(
                     controller: lastNameEditingController,
                     onChanged: (v) => context.read<MainScreenBloc>().customerLastName = v,
                     decoration: const InputDecoration(
+                      labelText: "Customer last name",
                       border: OutlineInputBorder(),
                       hintText: 'Customer last name',
                     ),
                   ),
                   const SizedBox(
-                    height: 8,
+                    height: 16,
                   ),
                   TextField(
                     controller: basketValueEditingController,
                     keyboardType: TextInputType.phone,
                     onChanged: (v) => context.read<MainScreenBloc>().basketValue = v,
                     decoration: const InputDecoration(
+                      labelText: "Basket value",
                       border: OutlineInputBorder(),
                       hintText: 'Basket value',
                     ),
