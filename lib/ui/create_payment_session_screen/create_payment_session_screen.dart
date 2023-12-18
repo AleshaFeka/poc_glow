@@ -20,8 +20,9 @@ class CreatePaymentSessionScreen extends StatefulWidget {
 }
 
 class _CreatePaymentSessionScreenState extends State<CreatePaymentSessionScreen> {
-  final List<String> list = envUrls.map((e) => e.key).toList();
-  String dropdownValue = envUrls.first.key;
+  final TextEditingController firstNameEditingController = TextEditingController(text: "");
+  final TextEditingController lastNameEditingController = TextEditingController(text: "");
+  final TextEditingController basketValueEditingController = TextEditingController(text: "");
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +32,10 @@ class _CreatePaymentSessionScreenState extends State<CreatePaymentSessionScreen>
         statusBarIconBrightness: Brightness.dark,
       ),
     );
+
+    firstNameEditingController.text = context.read<MainScreenBloc>().customerFirstName;
+    lastNameEditingController.text = context.read<MainScreenBloc>().customerLastName;
+    basketValueEditingController.text = context.read<MainScreenBloc>().basketValue.toString();
 
     return WillPopScope(
       onWillPop: () async {
@@ -48,27 +53,37 @@ class _CreatePaymentSessionScreenState extends State<CreatePaymentSessionScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Environment: "),
-                      SizedBox(width: 8,),
+                      const Text("Environment: "),
+                      const SizedBox(
+                        width: 8,
+                      ),
                       DropdownButton<String>(
-                        value: dropdownValue,
+                        value: envUrls.entries
+                            .firstWhere((element) => element.value == context.read<MainScreenBloc>().envUrl)
+                            .key,
                         onChanged: (String? value) {
-                          setState(() {
-                            dropdownValue = value!;
-                          });
+                          if (value != null) {
+                            final newValue = envUrls.entries.firstWhere((element) => element.key == value).value;
+                            context.read<MainScreenBloc>().envUrl = newValue;
+                            setState(() {});
+                          }
                         },
-                        items: envUrls.map<DropdownMenuItem<String>>((MapEntry value) {
-                          return DropdownMenuItem<String>(
-                            value: value.key,
-                            child: Text(value.key),
-                          );
-                        }).toList(),
+                        items: envUrls.keys
+                            .map((e) => DropdownMenuItem<String>(
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8,),
-                  const TextField(
-                    decoration: InputDecoration(
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  TextField(
+                    controller: firstNameEditingController,
+                    onChanged: (v) => context.read<MainScreenBloc>().customerFirstName = v,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Customer first name',
                     ),
@@ -76,8 +91,10 @@ class _CreatePaymentSessionScreenState extends State<CreatePaymentSessionScreen>
                   const SizedBox(
                     height: 8,
                   ),
-                  const TextField(
-                    decoration: InputDecoration(
+                  TextField(
+                    controller: lastNameEditingController,
+                    onChanged: (v) => context.read<MainScreenBloc>().customerLastName = v,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Customer last name',
                     ),
@@ -85,8 +102,11 @@ class _CreatePaymentSessionScreenState extends State<CreatePaymentSessionScreen>
                   const SizedBox(
                     height: 8,
                   ),
-                  const TextField(
-                    decoration: InputDecoration(
+                  TextField(
+                    controller: basketValueEditingController,
+                    keyboardType: TextInputType.phone,
+                    onChanged: (v) => context.read<MainScreenBloc>().basketValue = v,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Basket value',
                     ),

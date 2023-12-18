@@ -15,12 +15,18 @@ const _prefBasketValueKey = "basketValue";
 const _envUrlDefaultValue = "platform-api.dev03.glowfinsvs.com";
 const _firstNameDefaultValue = "John";
 const _lastNameDefaultValue = "Smith";
-const int _basketValueDefaultValue = 1900;
+const _basketValueDefaultValue = "1900";
 
 class MainScreenBloc extends Cubit<MainScreenState> {
   LoanOptions? _options;
   ThemeChangeNotifier themeChangeNotifier;
   SharedPreferences? _prefs;
+
+/*
+  String customerFirstName = _firstNameDefaultValue;
+  String customerLastName = _lastNameDefaultValue;
+  int basketValue = _basketValueDefaultValue;
+*/
 
   MainScreenBloc()
       : themeChangeNotifier = ThemeChangeNotifier(),
@@ -38,10 +44,12 @@ class MainScreenBloc extends Cubit<MainScreenState> {
 
 
   set customerFirstName(String newValue) {
+    print("customerFirstName - $newValue");
     _prefs?.setString(_prefFirstNameKey, newValue);
   }
 
   String get customerFirstName {
+    print("get customerFirstName - ${_prefs?.getString(_prefFirstNameKey)}");
     return _prefs?.getString(_prefFirstNameKey) ?? _firstNameDefaultValue;
   }
 
@@ -53,12 +61,12 @@ class MainScreenBloc extends Cubit<MainScreenState> {
     return _prefs?.getString(_prefLastNameKey) ?? _lastNameDefaultValue;
   }
 
-  set basketValue(int newValue) {
-    _prefs?.setInt(_prefBasketValueKey, newValue);
+  set basketValue(String newValue) {
+    _prefs?.setString(_prefBasketValueKey, newValue);
   }
 
-  int get basketValue {
-    return _prefs?.getInt(_prefBasketValueKey) ?? _basketValueDefaultValue;
+  String get basketValue {
+    return _prefs?.getString(_prefBasketValueKey) ?? _basketValueDefaultValue;
   }
 
   set envUrl(String newValue) {

@@ -14,10 +14,10 @@ const primaryColor = Color(0xFF0066FF);
 const backgroundColor = Color(0xFFFFFFFF);
 const baseUrl = "platform-api.dev03.glowfinsvs.com";
 
-const List<MapEntry<String, String>> envUrls = [
-  MapEntry("dev03", "platform-api.dev03.glowfinsvs.com"),
-  MapEntry("qa03", "platform-api.qa03.glowfinsvs.com"),
-];
+const Map<String, String> envUrls = {
+  "dev03": "platform-api.dev03.glowfinsvs.com",
+  "qa03": "platform-api.qa03.glowfinsvs.com",
+};
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
