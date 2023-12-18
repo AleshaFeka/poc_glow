@@ -25,6 +25,9 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
   PaymentSessionDataModel? paymentData;
   AppLifecycleListener? _listener;
   String themeName = "";
+  String customerFirstName = "";
+  String customerLastName = "";
+  String basketValueGross = "";
 
   bool _isLoadCompleted = false;
   bool _shouldCheckPermissionsAfterResume = false;
@@ -147,9 +150,9 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
         "customer_tenure": 60,
         "type_of_customer": "EE",
         "inGoodstanding": false,
-        "first_name": "John",
+        "first_name": customerFirstName,
         "middle_name": "",
-        "last_name": "Smith",
+        "last_name": customerLastName,
         "nationality": "British",
         "email": "test@emailtest.com",
         "mobile_number": "+447782337053",
@@ -177,7 +180,7 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
       "basket": {
         "basket_id": paymentData?.basketId ?? "",
         "basket_version": "basket version information",
-        "basket_gross_value": 1900,
+        "basket_gross_value": int.parse(basketValueGross),
         "basket_finance_total": 1900,
         "basket_non_finance_total": 0,
         "vat": 0,

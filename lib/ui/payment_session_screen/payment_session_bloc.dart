@@ -16,6 +16,7 @@ class PaymentSessionBloc extends Cubit<PaymentSessionState> {
   PaymentSessionDataModel? model;
   String token = "";
   String themeName = "";
+  String basketValueGross = "";
 
   PaymentSessionBloc() : super(PaymentSessionUrlLoadingState());
 
@@ -126,7 +127,7 @@ class PaymentSessionBloc extends Cubit<PaymentSessionState> {
       // (required)
       "basket_id": DateTime.now().microsecondsSinceEpoch.toString(),
       // (required) unique basket reference
-      "basket_gross_value": 1900,
+      "basket_gross_value": int.parse(basketValueGross),
       // (required) the total basket value for all items in the basket, all payment methods
       "basket_finance_total": 1900,
       // (required) the total value for all items to be financed. Not null, send as 0

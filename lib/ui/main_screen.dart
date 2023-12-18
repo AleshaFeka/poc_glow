@@ -68,6 +68,7 @@ class _MainScreenState extends State<MainScreen> {
       case PaymentSessionState:
         _paymentSessionBloc.token = (state as PaymentSessionState).token;
         _paymentSessionBloc.themeName = context.read<MainScreenBloc>().isDarkTheme ? "dark" : "light";
+        _paymentSessionBloc.basketValueGross = context.read<MainScreenBloc>().basketValue;
         return BlocProvider.value(
           value: _paymentSessionBloc,
           child: PaymentSessionScreen(
@@ -83,6 +84,9 @@ class _MainScreenState extends State<MainScreen> {
         _applicationScreenBloc.options = (state as ApplicationState).options;
         _applicationScreenBloc.paymentData = _paymentSessionBloc.model;
         _applicationScreenBloc.themeName = context.read<MainScreenBloc>().isDarkTheme ? "dark" : "light";
+        _applicationScreenBloc.customerFirstName = context.read<MainScreenBloc>().customerFirstName;
+        _applicationScreenBloc.customerLastName = context.read<MainScreenBloc>().customerLastName;
+        _applicationScreenBloc.basketValueGross = context.read<MainScreenBloc>().basketValue;
         return BlocProvider.value(
           value: _applicationScreenBloc,
           child: ApplicationScreen(
