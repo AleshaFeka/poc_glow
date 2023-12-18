@@ -20,6 +20,9 @@ class CreatePaymentSessionScreen extends StatefulWidget {
 }
 
 class _CreatePaymentSessionScreenState extends State<CreatePaymentSessionScreen> {
+  final List<String> list = envUrls.map((e) => e.key).toList();
+  String dropdownValue = envUrls.first.key;
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -37,41 +40,92 @@ class _CreatePaymentSessionScreenState extends State<CreatePaymentSessionScreen>
       child: BlocBuilder<CreatePaymentSessionBloc, CreatePaymentSessionState>(builder: (_, state) {
         return Expanded(
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 188,
-                  child: GlowButton(
-                    EdgeInsets.zero,
-                    child: state is LoadedCreatePaymentSessionState
-                        ? const Text("Create Payment")
-                        : const CircularProgressIndicator(
-                            color: Colors.grey,
-                          ),
-                    isAccent: true,
-                    onPressed: state is LoadedCreatePaymentSessionState
-                        ? () {
-                            widget.onPressed(state.token);
-                          }
-                        : null,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Environment: "),
+                      SizedBox(width: 8,),
+                      DropdownButton<String>(
+                        value: dropdownValue,
+                        onChanged: (String? value) {
+                          setState(() {
+                            dropdownValue = value!;
+                          });
+                        },
+                        items: envUrls.map<DropdownMenuItem<String>>((MapEntry value) {
+                          return DropdownMenuItem<String>(
+                            value: value.key,
+                            child: Text(value.key),
+                          );
+                        }).toList(),
+                      ),
+                    ],
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Dark Theme", style: Theme.of(context).textTheme.bodyLarge),
-                    Checkbox(
-                      value: context.read<MainScreenBloc>().isDarkTheme,
-                      onChanged: (isDarkTheme) {
-                        context.read<MainScreenBloc>().darkTheme = isDarkTheme ?? false;
-                        setState(() {
-                        });
-                      },
-                    )
-                  ],
-                )
-              ],
+                  const SizedBox(height: 8,),
+                  const TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Customer first name',
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  const TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Customer last name',
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  const TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Basket value',
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Dark Theme", style: Theme.of(context).textTheme.bodyLarge),
+                      Checkbox(
+                        value: context.read<MainScreenBloc>().isDarkTheme,
+                        onChanged: (isDarkTheme) {
+                          context.read<MainScreenBloc>().darkTheme = isDarkTheme ?? false;
+                          setState(() {});
+                        },
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 36,
+                  ),
+                  SizedBox(
+                    width: 188,
+                    child: GlowButton(
+                      EdgeInsets.zero,
+                      child: state is LoadedCreatePaymentSessionState
+                          ? const Text("Create Payment")
+                          : const CircularProgressIndicator(
+                              color: Colors.grey,
+                            ),
+                      isAccent: true,
+                      onPressed: state is LoadedCreatePaymentSessionState
+                          ? () {
+                              widget.onPressed(state.token);
+                            }
+                          : null,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );

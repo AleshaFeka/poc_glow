@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:poc_glow/ui/main_screen_provider.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await FlutterDownloader.initialize(
-      debug: true,
-      ignoreSsl: true
-  );
+  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
 
   runApp(const MyApp());
 }
@@ -16,6 +13,11 @@ void main() async{
 const primaryColor = Color(0xFF0066FF);
 const backgroundColor = Color(0xFFFFFFFF);
 const baseUrl = "platform-api.dev03.glowfinsvs.com";
+
+const List<MapEntry<String, String>> envUrls = [
+  MapEntry("dev03", "platform-api.dev03.glowfinsvs.com"),
+  MapEntry("qa03", "platform-api.qa03.glowfinsvs.com"),
+];
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);

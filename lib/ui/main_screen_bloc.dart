@@ -7,6 +7,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'main_screen_state.dart';
 
 const _prefDarkThemeKey = "themeColor";
+const _prefEnvUrlKey = "envUrl";
+const _prefFirstNameKey = "firstName";
+const _prefLastNameKey = "lastName";
+const _prefBasketValueKey = "basketValue";
+
+const _envUrlDefaultValue = "platform-api.dev03.glowfinsvs.com";
+const _firstNameDefaultValue = "John";
+const _lastNameDefaultValue = "Smith";
+const int _basketValueDefaultValue = 1900;
 
 class MainScreenBloc extends Cubit<MainScreenState> {
   LoanOptions? _options;
@@ -26,6 +35,40 @@ class MainScreenBloc extends Cubit<MainScreenState> {
   bool get isDarkTheme {
     return _prefs?.getBool(_prefDarkThemeKey) ?? false;
   }
+
+
+  set customerFirstName(String newValue) {
+    _prefs?.setString(_prefFirstNameKey, newValue);
+  }
+
+  String get customerFirstName {
+    return _prefs?.getString(_prefFirstNameKey) ?? _firstNameDefaultValue;
+  }
+
+  set customerLastName(String newValue) {
+    _prefs?.setString(_prefLastNameKey, newValue);
+  }
+
+  String get customerLastName {
+    return _prefs?.getString(_prefLastNameKey) ?? _lastNameDefaultValue;
+  }
+
+  set basketValue(int newValue) {
+    _prefs?.setInt(_prefBasketValueKey, newValue);
+  }
+
+  int get basketValue {
+    return _prefs?.getInt(_prefBasketValueKey) ?? _basketValueDefaultValue;
+  }
+
+  set envUrl(String newValue) {
+    _prefs?.setString(_prefEnvUrlKey, newValue);
+  }
+
+  String get envUrl {
+    return _prefs?.getString(_prefEnvUrlKey) ?? _envUrlDefaultValue;
+  }
+
 
   void goToCreatePaymentSession(String token) {
     emit(PaymentSessionState(
