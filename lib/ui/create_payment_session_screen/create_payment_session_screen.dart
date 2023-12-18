@@ -35,7 +35,7 @@ class _CreatePaymentSessionScreenState extends State<CreatePaymentSessionScreen>
 
     firstNameEditingController.text = context.read<MainScreenBloc>().customerFirstName;
     lastNameEditingController.text = context.read<MainScreenBloc>().customerLastName;
-    basketValueEditingController.text = context.read<MainScreenBloc>().basketValue.toString();
+    basketValueEditingController.text = context.read<MainScreenBloc>().basketValue;
 
     return WillPopScope(
       onWillPop: () async {

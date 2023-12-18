@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:poc_glow/ui/main_screen_provider.dart';
 
-import 'data/url_provider.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -25,26 +23,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: EeUrlProvider.init(),
-        builder: (context, snapshot) {
-          return MaterialApp(
-            title: 'PoC Glow',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              appBarTheme: const AppBarTheme(
-                elevation: 0,
-                foregroundColor: primaryColor,
-                backgroundColor: backgroundColor,
-              ),
-              scaffoldBackgroundColor: backgroundColor,
-            ),
-            home: SafeArea(
-              child: snapshot.connectionState == ConnectionState.done
-                  ? const MainScreenProvider()
-                  : const Scaffold(body: Center(child: CircularProgressIndicator())),
-            ),
-          );
-        });
+    return MaterialApp(
+      title: 'PoC Glow',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          elevation: 0,
+          foregroundColor: primaryColor,
+          backgroundColor: backgroundColor,
+        ),
+        scaffoldBackgroundColor: backgroundColor,
+      ),
+      home: const SafeArea(child: MainScreenProvider()),
+    );
   }
 }

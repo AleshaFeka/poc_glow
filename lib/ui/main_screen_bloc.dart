@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:poc_glow/data/model/loan_options.dart';
 import 'package:poc_glow/data/model/result.dart';
+import 'package:poc_glow/data/shared_prefs_provider.dart';
 import 'package:poc_glow/data/url_provider.dart';
 import 'package:poc_glow/util/theme_change_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -103,6 +104,8 @@ class MainScreenBloc extends Cubit<MainScreenState> {
   }
 
   Future<void> initPrefs() async {
-    _prefs = await SharedPreferences.getInstance();
+    _prefs ??= await SharedPreferencesProvider.initAndGetInstance();
+    EeUrlProvider.init();
+    emit(CreatePaymentSessionState());
   }
 }
