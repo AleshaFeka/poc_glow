@@ -16,6 +16,8 @@ const backgroundColor = Color(0xFFFFFFFF);
 const Map<String, String> envUrls = {
   "dev03": "platform-api.dev03.glowfinsvs.com",
   "qa03": "platform-api.qa03.glowfinsvs.com",
+  "uat03": "platform-api.uat03.glowfinsvs.com",
+  "int03": "platform-api.int03.glowfinsvs.com",
 };
 
 class MyApp extends StatelessWidget {

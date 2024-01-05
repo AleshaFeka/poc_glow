@@ -130,10 +130,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_inappwebview
-      sha256: d198297060d116b94048301ee6749cd2e7d03c1f2689783f52d210a6b7aba350
+      sha256: ef97ab0ceae37ce51afe1423b96ae49646d9f54e4c8872fb0f7990bebd5d3967
       url: "https://pub.dev"
     source: hosted
-    version: "5.8.0"
+    version: "5.7.1+2"
   flutter_lints:
     dependency: "direct dev"
     description:
