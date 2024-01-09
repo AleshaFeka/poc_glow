@@ -129,7 +129,7 @@ class PaymentSessionBloc extends Cubit<PaymentSessionState> {
       // (required) unique basket reference
       "basket_gross_value": int.parse(basketValueGross),
       // (required) the total basket value for all items in the basket, all payment methods
-      "basket_finance_total": 1900,
+      "basket_finance_total": int.parse(basketValueGross),
       // (required) the total value for all items to be financed. Not null, send as 0
       "basket_non_finance_total": 0,
       // (required) the total value for all items to be paid by other payment methods. Not null, send as 0
@@ -165,7 +165,7 @@ class PaymentSessionBloc extends Cubit<PaymentSessionState> {
           // (required) number of units purchased
           "quantity_unit": "pcs",
           // (required) measurement of unit. Not validated
-          "unit_gross_price": 1900,
+          "unit_gross_price": int.parse(basketValueGross),
           // (required) This is the price of the item, inclusive of VAT. Major denomination implied, unless decimal is provided (2 decimals implied, unless the ISO4217 "currency" code supports 3 decimals)
           "unit_vat": 0,
           // (optional) This the VAT portion of the price. Major denomination implied, unless decimal is provided (2 decimals implied, unless the ISO4217 "currency" code supports 3 decimals)

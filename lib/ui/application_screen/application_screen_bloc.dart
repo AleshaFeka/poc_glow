@@ -181,7 +181,7 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
         "basket_id": paymentData?.basketId ?? "",
         "basket_version": "basket version information",
         "basket_gross_value": int.parse(basketValueGross),
-        "basket_finance_total": 1900,
+        "basket_finance_total": int.parse(basketValueGross),
         "basket_non_finance_total": 0,
         "vat": 0,
         "finance_order_lines": [
@@ -201,7 +201,7 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
             "expected_delivery_date": "2021-03-22",
             "quantity": 1,
             "quantity_unit": "pcs",
-            "unit_gross_price": 1900,
+            "unit_gross_price": int.parse(basketValueGross),
             "unit_vat": 0,
             "imageUrl": {}
           }
