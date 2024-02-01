@@ -6,6 +6,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:poc_glow/data/model/loan_options.dart';
 import 'package:poc_glow/ui/main_screen_bloc.dart';
 import 'package:poc_glow/ui/payment_session_screen/payment_session_state.dart';
+import 'package:poc_glow/util/snackbar_manager.dart';
 
 import 'payment_session_bloc.dart';
 
@@ -108,6 +109,7 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
     _webViewController?.evaluateJavascript(source: """
               window.dispatchEvent(new Event('THEME_CHANGED', {"theme" : "$themeName"}));             
     """);
+    showEventReceivedSnackBar(message: "THEME_CHANGED have been sent TO WebView.", isHighlighted: true);
   }
 
   Widget _buildContent(PaymentSessionState state) {
@@ -152,6 +154,7 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
   }
 
   void _onLoanOptionSelected(List<dynamic> args) {
+    showEventReceivedSnackBar(message: "SELECT_LOAN_OPTION received from WebView.");
     context.read<PaymentSessionBloc>().onLoanOptionsSelected(args);
 
     _webViewController?.evaluateJavascript(source: """
@@ -163,6 +166,7 @@ class _PaymentSessionScreenState extends State<PaymentSessionScreen> {
   }
 
   void _onHeightChanged(dynamic args) {
+    showEventReceivedSnackBar(message: "SET_WEB_VIEW_HEIGHT_HANDLER received from WebView.");
     final data = args.first;
 
     if (data['webViewScrollHeight'] != null) {

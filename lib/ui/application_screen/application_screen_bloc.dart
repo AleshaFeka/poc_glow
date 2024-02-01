@@ -155,8 +155,8 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
         "last_name": customerLastName,
         "nationality": "British",
         "email": "test@emailtest.com",
-        "mobile_number": "+447782337053",
-        "phone_number": "+447782337053",
+        "mobile_number": "+375297894527",
+        "phone_number": "+375297894527",
         "billing_address": {
           "address": "Address Line 1",
           "address2": "Address Line 2",

@@ -5,6 +5,7 @@ import 'package:poc_glow/data/model/result.dart';
 import 'package:poc_glow/ui/main_screen_bloc.dart';
 import 'package:poc_glow/ui/shared_widgets/pdf_downloader_helper/pdf_downloader_helper_bloc.dart';
 import 'package:poc_glow/ui/shared_widgets/pdf_downloader_helper/pdf_downloader_helper_widget.dart';
+import 'package:poc_glow/util/snackbar_manager.dart';
 
 import 'application_screen_bloc.dart';
 import 'application_screen_state.dart';
@@ -106,6 +107,7 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     _webViewController?.evaluateJavascript(source: """
               window.dispatchEvent(new Event('BACK_BUTTON_CLICKED'));             
             """);
+    showEventReceivedSnackBar(message: "BACK_BUTTON_CLICKED have been sent TO WebView.", isHighlighted: true);
   }
 
   void _notifyThemeChanged(Brightness brightness) {
@@ -113,6 +115,7 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     _webViewController?.evaluateJavascript(source: """
               window.dispatchEvent(new Event('THEME_CHANGED', {"theme" : "$themeName"}));             
     """);
+    showEventReceivedSnackBar(message: "THEME_CHANGED have been sent TO WebView.", isHighlighted: true);
   }
 
   Widget _buildContent(ApplicationScreenState state) {
@@ -148,45 +151,49 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
           _webViewController?.addJavaScriptHandler(
             handlerName: "APPLICATION_COMPLETED",
             callback: (args) {
+              showEventReceivedSnackBar(message: "APPLICATION_COMPLETED received from WebView.");
               widget.onDone(Result.success);
             },
           );
           _webViewController?.addJavaScriptHandler(
             handlerName: "APPLICATION_PAUSED",
             callback: (args) {
+              showEventReceivedSnackBar(message: "APPLICATION_PAUSED received from WebView.");
               widget.onDone(Result.pending);
             },
           );
           _webViewController?.addJavaScriptHandler(
             handlerName: "APPLICATION_CANCEL_ACCEPTED",
             callback: (args) {
+              showEventReceivedSnackBar(message: "APPLICATION_CANCEL_ACCEPTED received from WebView.");
               widget.onDone(Result.cancelAccepted);
             },
           );
           _webViewController?.addJavaScriptHandler(
             handlerName: "APPLICATION_PAUSE_ACCEPTED",
             callback: (args) {
+              showEventReceivedSnackBar(message: "APPLICATION_PAUSE_ACCEPTED received from WebView.");
               widget.onDone(Result.pauseAccepted);
             },
           );
           _webViewController?.addJavaScriptHandler(
             handlerName: "APPLICATION_CANCELLED",
             callback: (args) {
-              print("APPLICATION_CANCELLED");
+              showEventReceivedSnackBar(message: "APPLICATION_CANCELLED received from WebView.");
               widget.onDone(Result.fail);
             },
           );
           _webViewController?.addJavaScriptHandler(
             handlerName: "APPLICATION_CANCEL_REQUEST",
             callback: (args) {
-              print("APPLICATION_CANCEL_REQUEST");
+              showEventReceivedSnackBar(message: "APPLICATION_CANCEL_REQUEST received from WebView.");
               widget.onDone(Result.fail);
             },
           );
           _webViewController?.addJavaScriptHandler(
             handlerName: "APPLICATION_DECLINED",
             callback: (args) {
-              print("APPLICATION_DECLINED");
+              showEventReceivedSnackBar(message: "APPLICATION_DECLINED received from WebView.");
               widget.onDone(Result.fail);
             },
           );
