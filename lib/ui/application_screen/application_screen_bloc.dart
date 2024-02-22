@@ -150,6 +150,7 @@ class ApplicationScreenBloc extends Cubit<ApplicationScreenState> {
         "customer_tenure": 60,
         "type_of_customer": "EE",
         "inGoodstanding": false,
+        "title": "Miss",
         "first_name": customerFirstName,
         "middle_name": "",
         "last_name": customerLastName,

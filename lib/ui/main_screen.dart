@@ -122,7 +122,7 @@ class _MainScreenState extends State<MainScreen> {
             Expanded(
               child: GlowButton(
                 const EdgeInsets.only(right: 16),
-                child: const Text("Continue"),
+                child: const Text("Continue..."),
                 isAccent: true,
                 onPressed: state.isAbleToContinue
                     ? () {
